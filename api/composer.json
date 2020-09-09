@@ -1,0 +1,17 @@
+{
+    "name": "SugarPuppyAPI",
+    "authors": [
+        {
+            "name": "jbrneto",
+            "email": "jbbatistajoao@gmail.com"
+        }
+    ],
+    "autoload": {
+        "classmap": [
+            "controllers/"
+        ]
+    },
+    "require": {
+        "slim/slim": "^3.0"
+    }
+}

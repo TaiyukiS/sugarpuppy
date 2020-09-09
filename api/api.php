@@ -1,0 +1,5 @@
+<?php
+  
+  // Instanciação da aplicação
+
+?>
