@@ -17,6 +17,7 @@ steps:
 
 - script: |
     cd frontend
+    npm install -g @quasar/cli
     npm install
     quasar build
-  displayName: 'cd frontend npm install and build'
+  displayName: 'Build Quasar App'
