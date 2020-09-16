@@ -10,12 +10,10 @@
           aria-label="Menu"
           @click="leftDrawerOpen = !leftDrawerOpen"
         />
-
         <q-toolbar-title>
-          Quasar App
+          Suggar Puppy
         </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
+        <div>Usuário X</div>
       </q-toolbar>
     </q-header>
 
@@ -92,7 +90,7 @@ const linksData = [
     icon: 'favorite',
     link: 'https://awesome.quasar.dev'
   }
-];
+]
 
 export default {
   name: 'MainLayout',
