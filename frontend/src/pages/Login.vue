@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-center items-center">
+  <div id="login" class="flex justify-center items-center">
     <img alt="Foto do Perfil"
       class="profile-picture"
       src="~assets/ehmole.jpg">
@@ -27,8 +27,8 @@ export default {
   }
 }
 </script>
-<style type="text/css">
-  .q-page-container {
+<style type="text/css" scoped>
+  #login {
     padding: 40px 20px;
   }
   .q-page-container > div {

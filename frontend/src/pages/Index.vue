@@ -1,12 +1,13 @@
 <template>
   <q-page>
     <div class="flex post q-py-md q-px-lg">
-      <div class="flex flex-center">
+      <a @click="$router.push('/pet');" 
+        class="flex flex-center">
         <img alt="Foto do Pet"
           class="profile-picture"
           src="~assets/ehmole.jpg">
         <p class="q-ma-none q-ml-sm">Nome Pet</p>
-      </div>
+      </a>
       <article class="q-my-sm">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit.
       </article>
@@ -23,10 +24,12 @@
     </div>
     <div class="flex post q-py-md q-px-lg">
       <div class="flex flex-center">
-        <img alt="Foto do Pet"
-          class="profile-picture"
-          src="~assets/cachorro2.jpg">
-        <p class="q-ma-none q-ml-sm">Nome Pet</p>
+        <a @click="$router.push('/pet');" >
+          <img alt="Foto do Pet"
+            class="profile-picture"
+            src="~assets/cachorro2.jpg">
+          <p class="q-ma-none q-ml-sm">Nome Pet</p>
+        </a>
       </div>
       <article class="q-my-sm">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit.
@@ -50,7 +53,7 @@ export default {
   name: 'PageIndex'
 }
 </script>
-<style type="text/css">
+<style type="text/css" scoped>
   .q-page {
     padding: 20px 0;
   }
@@ -59,6 +62,9 @@ export default {
   }
   .post + .post {
     margin-top: 20px;
+  }
+  .post a {
+    cursor: pointer;
   }
   .post p {
     font-size: 20px;
