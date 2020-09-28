@@ -1,23 +1,13 @@
 <template>
-  <div class="fullscreen bg-blue text-white text-center q-pa-md flex flex-center">
+  <div class="fullscreen text-white text-center q-pa-md flex flex-center">
     <div>
-      <div style="font-size: 30vh">
-        404
-      </div>
-
-      <div class="text-h2" style="opacity:.4">
-        Oops. Nothing here...
-      </div>
-
-      <q-btn
-        class="q-mt-xl"
-        color="white"
-        text-color="blue"
-        unelevated
-        to="/"
-        label="Go Home"
-        no-caps
-      />
+      <h1 class="text-primary">Oops!</h1>
+      <h3 class="text-primary">
+        Não foi possível encontrar o que você procura.
+      </h3>
+      <q-btn class="q-mt-sm"
+        @click="$router.back();"
+        rounded color="primary" label="Voltar" />
     </div>
   </div>
 </template>
@@ -27,3 +17,17 @@ export default {
   name: 'Error404'
 }
 </script>
+<style type="text/css" scoped>
+  h1 {
+    font-size: 100px;
+  }
+  h3 {
+    font-size: 50px;
+    opacity: 0.5;
+  }
+  button {
+    width: 200px;
+    margin: 20px 0 0 0;
+    font-size: 20px;
+  }
+</style>

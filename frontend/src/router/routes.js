@@ -8,6 +8,13 @@ const routes = [
     ]
   },
   {
+    path: '/logout',
+    component: () => import('layouts/LoginLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/Logout.vue') }
+    ]
+  },
+  {
     path: '/timeline',
     component: () => import('layouts/MainLayout.vue'),
     children: [
@@ -16,7 +23,7 @@ const routes = [
   },
   {
     path: '/pet',
-    component: () => import('layouts/ProfileLayout.vue'),
+    component: () => import('layouts/MainLayout.vue'),
     children: [
       { path: '', component: () => import('pages/PetProfile.vue') }
     ]
