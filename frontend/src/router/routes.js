@@ -28,6 +28,13 @@ const routes = [
       { path: '', component: () => import('pages/PetProfile.vue') }
     ]
   },
+  {
+    path: '/search',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/SearchPet.vue') }
+    ]
+  },
 
   // Always leave this as last one,
   // but you can also remove it

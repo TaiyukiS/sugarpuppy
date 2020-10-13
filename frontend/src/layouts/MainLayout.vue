@@ -47,6 +47,11 @@ const linksData = [
     link: '/timeline'
   },
   {
+    title: 'Pesquisar',
+    icon: 'search',
+    link: '/search'
+  },
+  {
     title: 'Sair',
     icon: 'power_settings_new',
     link: '/logout'
