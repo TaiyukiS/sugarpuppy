@@ -1,16 +1,25 @@
 <template>
-  <div class="flex items-center q-pt-sm">
-    <img alt="Foto do Perfil"
-      class="profile-picture"
-      src="https://picsum.photos/300/300">
-    <h4 class="text-center">Nome do Pet</h4>
-    <article>
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-      <ul>
-        <li><b>Raça</b>: X</li>
-        <li><b>Cidade</b>: RS</li>
-      </ul>
-    </article>
+  <div class="flex items-center q-pt-sm q-px-sm">
+    <q-carousel
+      v-model="slide"
+      slide="style"
+      swipeable
+      animated
+      padding
+      height="460px"
+      class="q-mb-md"
+    >
+      <q-carousel-slide 
+        v-for="pet in petList"
+        :key="pet.id"
+        :name="pet.id">
+        <img alt="Foto do Perfil"
+          class="profile-picture"
+          :src="pet.profilePicture">
+        <h4 class="text-center">{{pet.name}}</h4>
+        <article>{{pet.description}}</article>
+      </q-carousel-slide>
+    </q-carousel>
     <div class="buttons flex q-mb-md q-px-sm">
       <q-btn rounded color="negative" icon="close" />
       <q-btn rounded color="primary" icon="done" />
@@ -19,8 +28,33 @@
 </template>
 
 <script>
+const pets = [
+  {
+    id: 1,
+    profilePicture: 'https://picsum.photos/300/300',
+    name: 'Nome do Pet',
+    description: `Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+      <ul>
+        <li><b>Raça</b>: X</li>
+        <li><b>Cidade</b>: RS</li>
+      </ul>`
+  },
+  {
+    id: 2,
+    profilePicture: 'https://picsum.photos/350/300',
+    name: 'Nome do Pet 2',
+    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+  }
+]
+
 export default {
-  name: 'SearchPet'
+  name: 'SearchPet',
+  data () {
+    return {
+      slide: 1,
+      petList: pets
+    }
+  }
 }
 </script>
 <style type="text/css" scoped>
@@ -35,15 +69,22 @@ export default {
     margin-bottom: 50px;
   }
   .profile-picture {
-    width: 350px;
-    height: 370px;
+    display: block;
+    margin: 0 auto;
+    width: 330px;
+    height: 350px;
+    pointer-events: none;
+  }
+  .q-carousel__slide {
+    padding: 0 !important;
   }
   h4 {
-    margin: 15px 0;
+    margin: 10px 0 0 0;
     color: #528124;
-    font-style: 30px;
+    font-size: 30px;
   }
   article {
+    padding: 0 15px;
     font-size: 15px;
   }
   article ul {
