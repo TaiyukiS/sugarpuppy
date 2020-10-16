@@ -22,8 +22,112 @@
     </q-carousel>
     <div class="buttons flex q-mb-md q-px-sm">
       <q-btn rounded color="negative" icon="close" />
+      <q-btn rounded class="mini" icon="settings" 
+        @click="configAberta = true" />
       <q-btn rounded color="primary" icon="done" />
     </div>
+    <q-dialog
+      :value="configAberta"
+      @hide="configAberta = false"
+      >
+      <q-card style="width: 700px; max-width: 80vw;">
+        <q-card-section>
+          <h4>Filtros</h4>
+        </q-card-section>
+        <q-card-section>
+          <q-select
+            label="Animal"
+            v-bind:value="filtroAnimalExibicao"
+            v-on:input="atualizarFiltro('Animal', $event)"
+            :options="listaAnimal">
+            <template v-slot:option="scope">
+              <q-item
+                v-bind="scope.itemProps"
+                v-on="scope.itemEvents">
+                <q-item-section>
+                  <q-item-label>
+                    {{scope.opt.nome}}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-select>
+          <q-select
+            label="Raça"
+            v-bind:value="filtroRacaExibicao"
+            v-on:input="atualizarFiltro('Raca', $event)"
+            :options="listaRaca">
+            <template v-slot:option="scope">
+              <q-item
+                v-bind="scope.itemProps"
+                v-on="scope.itemEvents">
+                <q-item-section>
+                  <q-item-label>
+                    {{scope.opt.nome}}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-select>
+          <q-select
+            label="Cor"
+            v-bind:value="filtroCorExibicao"
+            v-on:input="atualizarFiltro('Cor', $event)"
+            :options="listaCor">
+            <template v-slot:option="scope">
+              <q-item
+                v-bind="scope.itemProps"
+                v-on="scope.itemEvents">
+                <q-item-section>
+                  <q-item-label>
+                    {{scope.opt.nome}}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-select>
+          <q-select
+            label="Estado"
+            v-bind:value="filtroEstadoExibicao"
+            v-on:input="atualizarFiltro('Estado', $event)"
+            :options="listaEstado">
+            <template v-slot:option="scope">
+              <q-item
+                v-bind="scope.itemProps"
+                v-on="scope.itemEvents">
+                <q-item-section>
+                  <q-item-label>
+                    {{scope.opt.nome}}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-select>
+          <q-select
+            label="Cidade"
+            v-bind:value="filtroCidadeExibicao"
+            v-on:input="atualizarFiltro('Cidade', $event)"
+            :options="listaCidade">
+            <template v-slot:option="scope">
+              <q-item
+                v-bind="scope.itemProps"
+                v-on="scope.itemEvents">
+                <q-item-section>
+                  <q-item-label>
+                    {{scope.opt.nome}}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-select>
+        </q-card-section>
+        <q-card-section>
+          <q-btn label="Cancelar"
+            @click="configAberta = false" />
+          <q-btn color="primary" label="Filtrar" />
+        </q-card-section>
+      </q-card>
+  </q-dialog>
   </div>
 </template>
 
@@ -46,13 +150,87 @@ const pets = [
     description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
   }
 ]
+const animais = [
+  {
+    id: 1,
+    nome: 'Gato'
+  },
+  {
+    id: 2,
+    nome: 'Cachorro'
+  }
+]
+const racas = [
+  {
+    id: 1,
+    nome: 'Yorkshire',
+    idAnimal: 2
+  },
+  {
+    id: 2,
+    nome: 'Persa',
+    idAnimal: 1
+  }
+]
+const cores = [
+  {
+    id: 1,
+    nome: 'Amarelo'
+  },
+  {
+    id: 2,
+    nome: 'Preto'
+  }
+]
+const estados = [
+  {
+    id: 1,
+    nome: 'RS'
+  },
+  {
+    id: 2,
+    nome: 'SC'
+  }
+]
+const cidades = [
+  {
+    id: 1,
+    nome: 'Novo Hamburgo'
+  },
+  {
+    id: 2,
+    nome: 'São Leopoldo'
+  }
+]
 
 export default {
   name: 'SearchPet',
   data () {
     return {
       slide: 1,
-      petList: pets
+      configAberta: false,
+      petList: pets,
+      listaAnimal: animais,
+      filtroAnimal: null,
+      filtroAnimalExibicao: null,
+      listaRaca: racas,
+      filtroRaca: null,
+      filtroRacaExibicao: null,
+      listaCor: cores,
+      filtroCor: null,
+      filtroCorExibicao: null,
+      listaEstado: estados,
+      filtroEstado: null,
+      filtroEstadoExibicao: null,
+      listaCidade: cidades,
+      filtroCidade: null,
+      filtroCidadeExibicao: null
+    }
+  },
+  methods: {
+    atualizarFiltro (filtro, valor) {
+      this[`filtro${filtro}`] = valor
+      this[`filtro${filtro}Exibicao`] = valor.nome
     }
   }
 }
@@ -97,12 +275,18 @@ export default {
   .buttons {
     width: 100%;
     justify-content: space-around;
+    align-items: flex-end;
   }
-  button {
+  .buttons button {
     width: 70px;
     height: 70px;
     font-size: 20px;
     border-radius: 50%;
     font-weight: bold;
+  }
+  .buttons button.mini {
+    width: 40px;
+    height: 40px;
+    font-size: 15px;
   }
 </style>
