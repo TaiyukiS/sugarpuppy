@@ -18,9 +18,7 @@
 
       } catch (Exception $e) {
         $response_obj = MVException::catch($e, [
-          'campos_invalidos' => [500, 'campos_invalidos'],
-          'campos_incorretos' => [404, 'campos_incorretos'],
-          'nao_ativo' => [500, 'nao_ativo'],
+          'login_invalido' => [500, 'login_invalido']
         ]);
       }
 

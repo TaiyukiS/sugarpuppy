@@ -1,11 +1,23 @@
 <?php
 
   use \SugarPuppy\Env;
+  use \SugarPuppy\DB;
 
   use Psr\Http\Message\RequestInterface as Request;
   use Psr\Http\Message\ResponseInterface as Response;
 
   include_once(__DIR__.'/controllers/LoginController.php');
+
+  // Middleware de Conexao
+  $db_middleware = function(Request $request, Response $response, callable $next) {
+
+    $rs = $next($request, $response);
+
+    // Fecha conexoes pendentes
+    DB::closeConnection();
+
+    return $rs;
+  };
 
   // Middleware de Sessão
   $session_middleware = function(Request $request, Response $response, callable $next) {
@@ -72,5 +84,6 @@
   */
   $app->add($auth_middleware);
   $app->add($session_middleware);
+  $app->add($db_middleware);
 
 ?>

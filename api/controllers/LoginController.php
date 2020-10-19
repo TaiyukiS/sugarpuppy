@@ -1,6 +1,8 @@
 <?php
 
-use \MV\Env;
+use \SugarPuppy\Env;
+use \SugarPuppy\DB;
+use \SugarPuppy\SPException;
 
 class LoginController {
   private static $PRE_SALT = 'SUg4R';
@@ -14,8 +16,59 @@ class LoginController {
   }
 
   public static function loginUsuario($dados) {
+    $email = $dados['email'];
+    $senha = $dados['senha'];
+
+    $query = "
+    SELECT id FROM usuario
+    WHERE email = '{$email}'
+      AND senha = '{$senha}'
+      AND ativo = 'S'
+    LIMIT 1";
+
+    DB::getConnection();
+
+    $result = static::execute($query);
+
+    if ($result->num_rows == 0) {
+      throw new SPException(500, "login_invalido");
+    }
+
+    $row = $result->fetch_assoc();
+
+    $response = [
+      'access_key' => static::criarChaveAcesso($row['id_usuario']),
+      'id_usuario' => $row['id_usuario']
+    ];
+
+    DB::closeConnection();
+
+    return $response;
   }
   public static function carregarLogin($dados) {
+    $id_usuario = $dados['id_usuario'];
+
+    $query = "
+    SELECT id, nome
+    FROM usuario
+    WHERE id = {$id_usuario}
+    LIMIT 1";
+
+    DB::getConnection();
+
+    $result = static::execute($query);
+
+    if ($result->num_rows == 0) {
+      throw new SPException(500, "login_invalido");
+    }
+
+    $row = $result->fetch_assoc();
+
+    Env::Set('nome', $row['nome']);
+
+    DB::closeConnection();
+
+    return $response;
   }
 }
 
