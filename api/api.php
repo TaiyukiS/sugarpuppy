@@ -12,7 +12,9 @@
   $app = new \Slim\App();
 
   include_once(__DIR__.'/middlewares.php');
-  include_once(__DIR__.'/routes/check.php');
+  
+  include_once(__DIR__.'/routes/login.php');
+  include_once(__DIR__.'/routes/pets.php');
 
   $app->run();
 

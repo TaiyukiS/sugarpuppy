@@ -28,7 +28,7 @@ class LoginController {
 
     DB::getConnection();
 
-    $result = static::execute($query);
+    $result = DB::execute($query);
 
     if ($result->num_rows == 0) {
       throw new SPException(500, "login_invalido");
@@ -56,7 +56,7 @@ class LoginController {
 
     DB::getConnection();
 
-    $result = static::execute($query);
+    $result = DB::execute($query);
 
     if ($result->num_rows == 0) {
       throw new SPException(500, "login_invalido");

@@ -47,6 +47,18 @@ class DB {
     }
     return static::$instance->query($query);
   }
+
+  public static function fetchAll($query) {
+    $result = static::execute($query);
+    if (!$result) {
+      return null;
+    }
+    
+    $acc = [];
+    while ($row = $result->fetch_assoc())
+      $acc[] = $row;
+    return $acc;
+  }
 }
 
 ?>

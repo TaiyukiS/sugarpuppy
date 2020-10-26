@@ -124,7 +124,9 @@
         <q-card-section>
           <q-btn label="Cancelar"
             @click="configAberta = false" />
-          <q-btn color="primary" label="Filtrar" />
+          <q-btn 
+            color="primary" label="Filtrar"
+            class="float-right" />
         </q-card-section>
       </q-card>
   </q-dialog>
@@ -132,6 +134,8 @@
 </template>
 
 <script>
+import { PetService } from 'services/pets';
+
 const pets = [
   {
     id: 1,
@@ -226,6 +230,12 @@ export default {
       filtroCidade: null,
       filtroCidadeExibicao: null
     }
+  },
+  mounted () {
+    PetService.getPets()
+      .then(pets => {
+        this.petList = pets;
+      });
   },
   methods: {
     atualizarFiltro (filtro, valor) {
