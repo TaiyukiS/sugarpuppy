@@ -6,7 +6,7 @@ class DB {
   private static $host = "database-1.c0j7lrmnjkkq.sa-east-1.rds.amazonaws.com";
   private static $user = "admin";
   private static $senha = "sugarpuppy";
-  private static $dbase = "sugarpuppy";
+  private static $dbase = "sugarpyppy";
   private static $port = "3306";
 
   private static $instance = null;

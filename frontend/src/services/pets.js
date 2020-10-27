@@ -1,11 +1,11 @@
-import { axiosInstance as axios, updateAxiosHeaders } from 'src/boot/axios';
+import { axiosInstance as axios } from 'src/boot/axios'
 
-function getPets(filtros) {
+function getPets (filtros) {
   return axios
     .get('/pets', filtros)
-    .catch((error) => Promise.reject(error));
+    .catch((error) => Promise.reject(error))
 }
 
-export default {
+export const PetService = {
   getPets
 }

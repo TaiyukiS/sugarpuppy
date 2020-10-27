@@ -3,7 +3,7 @@
 namespace SugarPuppy;
   
 /* Sugar Puppy Exception */
-class SPException extends Exception {
+class SPException extends \Exception {
   public $code = 500;
   public $type = 'internal';
 

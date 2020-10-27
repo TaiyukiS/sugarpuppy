@@ -37,8 +37,6 @@ class PetController {
       throw new SPException(500, "erro_query");
     }
 
-    DB::closeConnection();
-
     return $pets;
   }
 }

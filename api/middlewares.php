@@ -49,7 +49,6 @@
       return $response->withStatus(401)->write('Forbidden: Invalid Api Key');
     }
     
-
     // Autorizado: método de acesso público
     $public_methods = [ 'POST-login' ];
     $uri = $request->getMethod().'-'.$request->getUri()->getPath();

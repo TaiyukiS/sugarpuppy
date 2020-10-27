@@ -19,7 +19,6 @@ class Post {
 
     DB::getConnection();
     $id = DB::getInsertedID($query);
-    DB::closeConnection();
     return $id;
   }
 
@@ -37,8 +36,6 @@ class Post {
         $response[] = $row;
       }
     }
-
-    DB::closeConnection();
 
     return $response;
   }

@@ -8,6 +8,10 @@
 
   include_once(__DIR__.'/Env.php');
   include_once(__DIR__.'/Exception.php');
+  include_once(__DIR__.'/DB.php');
+
+  // Carregar Dependências
+  require_once(__DIR__.'/vendor/autoload.php');
 
   $app = new \Slim\App();
 

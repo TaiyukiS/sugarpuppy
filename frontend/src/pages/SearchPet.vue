@@ -134,7 +134,7 @@
 </template>
 
 <script>
-import { PetService } from 'services/pets';
+import { PetService } from '../services/pets'
 
 const pets = [
   {
@@ -234,8 +234,8 @@ export default {
   mounted () {
     PetService.getPets()
       .then(pets => {
-        this.petList = pets;
-      });
+        this.petList = pets
+      })
   },
   methods: {
     atualizarFiltro (filtro, valor) {

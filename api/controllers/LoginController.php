@@ -41,13 +41,9 @@ class LoginController {
       'id_usuario' => $row['id_usuario']
     ];
 
-    DB::closeConnection();
-
     return $response;
   }
-  public static function carregarLogin($dados) {
-    $id_usuario = $dados['id_usuario'];
-
+  public static function carregarLogin($id_usuario) {
     $query = "
     SELECT id, nome
     FROM usuario
@@ -66,9 +62,7 @@ class LoginController {
 
     Env::Set('nome', $row['nome']);
 
-    DB::closeConnection();
-
-    return $response;
+    return $row;
   }
 }
 
