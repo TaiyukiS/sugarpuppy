@@ -33,7 +33,7 @@ export { axiosInstance, updateAxiosHeaders }
 export default async ({ Vue }) => {
   const dadosUsuario = LocalStorage.get('login')
 
-  if (dadosUsuario != null) {
+  if (dadosUsuario) {
     updateAxiosHeaders(dadosUsuario)
   }
 

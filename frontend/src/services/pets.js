@@ -6,6 +6,13 @@ function getPets (filtros) {
     .catch((error) => Promise.reject(error))
 }
 
+function getCaracteristicas () {
+  return axios
+    .get('/pets/caracteristicas')
+    .catch((error) => Promise.reject(error))
+}
+
 export const PetService = {
-  getPets
+  getPets,
+  getCaracteristicas
 }

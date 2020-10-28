@@ -8,6 +8,15 @@
 
   include_once(__DIR__.'/controllers/LoginController.php');
 
+  // Middleware de CORS
+  $cors_middleware = function(Request $request, Response $response, callable $next) {
+    if ($request->isOptions() && strlen($request->getBody()) == 0) {
+      return $response->withStatus(200)->write('"CORS OK"');
+    }
+
+    return $next($request, $response);
+  };
+
   // Middleware de Conexao
   $db_middleware = function(Request $request, Response $response, callable $next) {
 
@@ -84,5 +93,6 @@
   $app->add($auth_middleware);
   $app->add($session_middleware);
   $app->add($db_middleware);
+  $app->add($cors_middleware);
 
 ?>

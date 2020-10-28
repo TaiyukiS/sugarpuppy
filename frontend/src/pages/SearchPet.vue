@@ -15,9 +15,9 @@
         :name="pet.id">
         <img alt="Foto do Perfil"
           class="profile-picture"
-          :src="pet.profilePicture">
-        <h4 class="text-center">{{pet.name}}</h4>
-        <article>{{pet.description}}</article>
+          :src="pet.url_foto">
+        <h4 class="text-center">{{pet.nome}}</h4>
+        <article>{{pet.descricao}}</article>
       </q-carousel-slide>
     </q-carousel>
     <div class="buttons flex q-mb-md q-px-sm">
@@ -46,7 +46,7 @@
                 v-on="scope.itemEvents">
                 <q-item-section>
                   <q-item-label>
-                    {{scope.opt.nome}}
+                    {{scope.opt.animal}}
                   </q-item-label>
                 </q-item-section>
               </q-item>
@@ -63,7 +63,7 @@
                 v-on="scope.itemEvents">
                 <q-item-section>
                   <q-item-label>
-                    {{scope.opt.nome}}
+                    {{scope.opt.raca}}
                   </q-item-label>
                 </q-item-section>
               </q-item>
@@ -80,7 +80,7 @@
                 v-on="scope.itemEvents">
                 <q-item-section>
                   <q-item-label>
-                    {{scope.opt.nome}}
+                    {{scope.opt.cor}}
                   </q-item-label>
                 </q-item-section>
               </q-item>
@@ -97,7 +97,7 @@
                 v-on="scope.itemEvents">
                 <q-item-section>
                   <q-item-label>
-                    {{scope.opt.nome}}
+                    {{scope.opt.estado}}
                   </q-item-label>
                 </q-item-section>
               </q-item>
@@ -114,7 +114,7 @@
                 v-on="scope.itemEvents">
                 <q-item-section>
                   <q-item-label>
-                    {{scope.opt.nome}}
+                    {{scope.opt.cidade}}
                   </q-item-label>
                 </q-item-section>
               </q-item>
@@ -136,105 +136,45 @@
 <script>
 import { PetService } from '../services/pets'
 
-const pets = [
-  {
-    id: 1,
-    profilePicture: 'https://picsum.photos/300/300',
-    name: 'Nome do Pet',
-    description: `Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-      <ul>
-        <li><b>Raça</b>: X</li>
-        <li><b>Cidade</b>: RS</li>
-      </ul>`
-  },
-  {
-    id: 2,
-    profilePicture: 'https://picsum.photos/350/300',
-    name: 'Nome do Pet 2',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
-  }
-]
-const animais = [
-  {
-    id: 1,
-    nome: 'Gato'
-  },
-  {
-    id: 2,
-    nome: 'Cachorro'
-  }
-]
-const racas = [
-  {
-    id: 1,
-    nome: 'Yorkshire',
-    idAnimal: 2
-  },
-  {
-    id: 2,
-    nome: 'Persa',
-    idAnimal: 1
-  }
-]
-const cores = [
-  {
-    id: 1,
-    nome: 'Amarelo'
-  },
-  {
-    id: 2,
-    nome: 'Preto'
-  }
-]
-const estados = [
-  {
-    id: 1,
-    nome: 'RS'
-  },
-  {
-    id: 2,
-    nome: 'SC'
-  }
-]
-const cidades = [
-  {
-    id: 1,
-    nome: 'Novo Hamburgo'
-  },
-  {
-    id: 2,
-    nome: 'São Leopoldo'
-  }
-]
-
 export default {
   name: 'SearchPet',
   data () {
     return {
       slide: 1,
       configAberta: false,
-      petList: pets,
-      listaAnimal: animais,
+      petList: [],
+      listaAnimal: [],
       filtroAnimal: null,
       filtroAnimalExibicao: null,
-      listaRaca: racas,
+      listaRaca: [],
       filtroRaca: null,
       filtroRacaExibicao: null,
-      listaCor: cores,
+      listaCor: [],
       filtroCor: null,
       filtroCorExibicao: null,
-      listaEstado: estados,
+      listaEstado: [],
       filtroEstado: null,
       filtroEstadoExibicao: null,
-      listaCidade: cidades,
+      listaCidade: [],
       filtroCidade: null,
       filtroCidadeExibicao: null
     }
   },
   mounted () {
-    PetService.getPets()
+    PetService.getPets({
+      nao_vinculado: true
+    })
       .then(pets => {
         this.petList = pets
+      })
+
+    PetService.getCaracteristicas()
+      .then(caracteristicas => {
+        this.listaAnimal = caracteristicas.animais
+        this.listaRaca = caracteristicas.racas
+        this.listaCor = caracteristicas.cores
+        this.listaEstado = caracteristicas.estados
+        this.listaCidade = caracteristicas.cidades
       })
   },
   methods: {
