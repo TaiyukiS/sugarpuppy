@@ -1,10 +1,14 @@
 <template>
   <div class="flex items-center q-pt-sm q-px-sm">
+    <h6 v-if="msgPesquisando">Pesquisando...</h6>
+    <h6 v-if="msgZeroResults">Sem Resultados</h6>
     <q-carousel
       v-model="slide"
       slide="style"
       swipeable
       animated
+      transition-prev="slide-right"
+      transition-next="slide-left"
       padding
       height="460px"
       class="q-mb-md"
@@ -13,18 +17,22 @@
         v-for="pet in petList"
         :key="pet.id"
         :name="pet.id">
-        <img alt="Foto do Perfil"
-          class="profile-picture"
-          :src="pet.url_foto">
-        <h4 class="text-center">{{pet.nome}}</h4>
+        <a @click="$router.push('/pet');" >
+          <img alt="Foto do Perfil"
+            class="profile-picture"
+            :src="pet.url_foto">
+          <h4 class="text-center">{{pet.nome}}</h4>
+        </a>
         <article>{{pet.descricao}}</article>
       </q-carousel-slide>
     </q-carousel>
     <div class="buttons flex q-mb-md q-px-sm">
-      <q-btn rounded color="negative" icon="close" />
+      <q-btn v-if="petList.length > 0"
+        rounded color="negative" icon="close" />
       <q-btn rounded class="mini" icon="settings" 
         @click="configAberta = true" />
-      <q-btn rounded color="primary" icon="done" />
+      <q-btn v-if="petList.length > 0"
+        rounded color="primary" icon="done" />
     </div>
     <q-dialog
       :value="configAberta"
@@ -46,7 +54,7 @@
                 v-on="scope.itemEvents">
                 <q-item-section>
                   <q-item-label>
-                    {{scope.opt.animal}}
+                    {{scope.opt.nome}}
                   </q-item-label>
                 </q-item-section>
               </q-item>
@@ -63,7 +71,7 @@
                 v-on="scope.itemEvents">
                 <q-item-section>
                   <q-item-label>
-                    {{scope.opt.raca}}
+                    {{scope.opt.nome}}
                   </q-item-label>
                 </q-item-section>
               </q-item>
@@ -80,7 +88,7 @@
                 v-on="scope.itemEvents">
                 <q-item-section>
                   <q-item-label>
-                    {{scope.opt.cor}}
+                    {{scope.opt.nome}}
                   </q-item-label>
                 </q-item-section>
               </q-item>
@@ -97,7 +105,7 @@
                 v-on="scope.itemEvents">
                 <q-item-section>
                   <q-item-label>
-                    {{scope.opt.estado}}
+                    {{scope.opt.nome}}
                   </q-item-label>
                 </q-item-section>
               </q-item>
@@ -114,7 +122,7 @@
                 v-on="scope.itemEvents">
                 <q-item-section>
                   <q-item-label>
-                    {{scope.opt.cidade}}
+                    {{scope.opt.nome}}
                   </q-item-label>
                 </q-item-section>
               </q-item>
@@ -124,8 +132,12 @@
         <q-card-section>
           <q-btn label="Cancelar"
             @click="configAberta = false" />
+          <q-btn label="Limpar"
+            class="q-ml-md"
+            @click="limparFiltros" />
           <q-btn 
             color="primary" label="Filtrar"
+            @click="filtrarPets"
             class="float-right" />
         </q-card-section>
       </q-card>
@@ -141,6 +153,8 @@ export default {
   data () {
     return {
       slide: 1,
+      msgPesquisando: false,
+      msgZeroResults: false,
       configAberta: false,
       petList: [],
       listaAnimal: [],
@@ -161,11 +175,19 @@ export default {
     }
   },
   mounted () {
+    this.msgPesquisando = true
+    this.msgZeroResults = false
     PetService.getPets({
       nao_vinculado: true
     })
       .then(pets => {
+        this.msgPesquisando = false
         this.petList = pets
+        if (pets.length > 0) {
+          this.slide = pets[0].id
+        } else {
+          this.msgZeroResults = true
+        }
       })
 
     PetService.getCaracteristicas()
@@ -181,6 +203,41 @@ export default {
     atualizarFiltro (filtro, valor) {
       this[`filtro${filtro}`] = valor
       this[`filtro${filtro}Exibicao`] = valor.nome
+    },
+    limparFiltros () {
+      this.filtroAnimal = null
+      this.filtroAnimalExibicao = ''
+      this.filtroRaca = null
+      this.filtroRacaExibicao = ''
+      this.filtroCor = null
+      this.filtroCorExibicao = ''
+      this.filtroEstado = null
+      this.filtroEstadoExibicao = ''
+      this.filtroCidade = null
+      this.filtroCidadeExibicao = ''
+    },
+    filtrarPets () {
+      this.petList = []
+      this.configAberta = false
+      this.msgPesquisando = true
+      this.msgZeroResults = false
+      PetService.getPets({
+        animal: (this.filtroAnimal) ? this.filtroAnimal.id : null,
+        raca: (this.filtroRaca) ? this.filtroRaca.id : null,
+        cor: (this.filtroCor) ? this.filtroCor.id : null,
+        estado: (this.filtroEstado) ? this.filtroEstado.id : null,
+        cidade: (this.filtroCidade) ? this.filtroCidade.id : null,
+        nao_vinculado: true
+      })
+        .then(pets => {
+          this.msgPesquisando = false
+          this.petList = pets
+          if (pets.length > 0) {
+            this.slide = pets[0].id
+          } else {
+            this.msgZeroResults = true
+          }
+        })
     }
   }
 }
@@ -188,6 +245,9 @@ export default {
 <style type="text/css" scoped>
   .q-page-container > div {
     flex-direction: column;
+  }
+  .q-carousel__slide a {
+    cursor: pointer;
   }
   .cover {
     width: 100%;
@@ -205,6 +265,10 @@ export default {
   }
   .q-carousel__slide {
     padding: 0 !important;
+  }
+  h6 {
+    margin: 10px 0 0 0;
+    color: #528124;
   }
   h4 {
     margin: 10px 0 0 0;

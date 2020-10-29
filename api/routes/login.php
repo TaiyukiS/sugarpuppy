@@ -1,5 +1,7 @@
 <?php
 
+  use \SugarPuppy\SPException;
+
   include_once(__DIR__.'/../controllers/LoginController.php');
   
   $app->group('/login', function () {
@@ -17,7 +19,7 @@
         $response_obj['dados'] = $login;
 
       } catch (Exception $e) {
-        $response_obj = MVException::catch($e, [
+        $response_obj = SPException::catch($e, [
           'login_invalido' => [500, 'login_invalido']
         ]);
       }

@@ -10,19 +10,19 @@ class PetController {
     $q_join = "";
 
     if (isset($filtros['animal']))
-      $q_where .= " AND ".$filtros['animal'];
+      $q_where .= " AND id_animal = ".$filtros['animal'];
 
     if (isset($filtros['raca']))
-      $q_where .= " AND ".$filtros['raca'];
+      $q_where .= " AND id_raca = ".$filtros['raca'];
     
     if (isset($filtros['cor']))
-      $q_where .= " AND ".$filtros['cor'];
+      $q_where .= " AND id_cor = ".$filtros['cor'];
 
     if (isset($filtros['estado']))
-      $q_where .= " AND ".$filtros['estado'];
+      $q_where .= " AND id_estado = ".$filtros['estado'];
 
     if (isset($filtros['cidade']))
-      $q_where .= " AND ".$filtros['cidade'];
+      $q_where .= " AND id_cidade = ".$filtros['cidade'];
 
     if (isset($filtros['nao_vinculado'])) {
       $id_usuario = Env::Get('id_usuario');
@@ -45,18 +45,18 @@ class PetController {
 
     $pets = DB::fetchAll($query);
 
-    if (!$pets) {
+    if (is_null($pets)) {
       throw new SPException(500, "erro_query");
     }
 
     return $pets;
   }
   public static function buscarCaracteristicas() {
-    $query_cor = "SELECT id, cor FROM pet_cor";
-    $query_estado = "SELECT id, estado FROM pet_estado";
-    $query_cidade = "SELECT id, cidade, id_estado FROM pet_cidade";
-    $query_animal = "SELECT id, animal FROM pet_animal";
-    $query_raca = "SELECT id, raca, id_animal FROM pet_raca";
+    $query_cor = "SELECT id, cor AS nome FROM pet_cor";
+    $query_estado = "SELECT id, estado AS nome FROM pet_estado";
+    $query_cidade = "SELECT id, cidade AS nome, id_estado FROM pet_cidade";
+    $query_animal = "SELECT id, animal AS nome FROM pet_animal";
+    $query_raca = "SELECT id, raca AS nome, id_animal FROM pet_raca";
 
     DB::getConnection();
 
@@ -88,6 +88,32 @@ class PetController {
       'animais' => $animais,
       'racas' => $racas
     ];
+  }
+  public static function like($dados) {
+
+    if (!isset($dados['id_pet']) || empty($dados['id_pet'])) {
+      throw new SPException(500, "sem_pet");
+    }
+
+    $id_pet = $dados['id_pet'];
+    $id_usuario = Env::Get('id_usuario');
+
+    $query = "
+    INSERT INTO pet_like (
+      id_usuario, id_pet, like
+    ) VALUES (
+      {$id_usuario}, {$id_pet}, 'S'
+    )";
+
+    DB::getConnection();
+
+    $rs = DB::execute($query);
+
+    if (!$rs) {
+      throw new SPException(500, "erro_query");
+    }
+
+    return true;
   }
 }
 
