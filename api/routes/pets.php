@@ -72,6 +72,27 @@
       echo json_encode($response_obj, JSON_NUMERIC_CHECK);
     });
 
+    $this->post('/{id_pet}/dislike', function ($request, $response, $args) {
+      
+      $response_obj = [];
+      $body = $request->getParsedBody();
+      $body['id_pet'] = $args['id_pet'];
+      
+      try {
+        PetController::dislike($body);
+        $response_obj['status'] = 200;
+        $response_obj['msg'] = 'ok';
+
+      } catch (Exception $e) {
+        $response_obj = SPException::catch($e, [
+          'sem_pet' => [500, 'id_pet_vazio'],
+          'erro_query' => [500, 'erro_insercao']
+        ]);
+      }
+
+      echo json_encode($response_obj, JSON_NUMERIC_CHECK);
+    });
+
   });
 
 ?>

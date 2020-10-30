@@ -6,8 +6,9 @@ use \SugarPuppy\SPException;
 
 class PetController {
   public static function buscar($filtros) {
-    $q_where = "";
+    $q_select = "";
     $q_join = "";
+    $q_where = "";
 
     if (isset($filtros['animal']))
       $q_where .= " AND id_animal = ".$filtros['animal'];
@@ -26,16 +27,18 @@ class PetController {
 
     if (isset($filtros['nao_vinculado'])) {
       $id_usuario = Env::Get('id_usuario');
-      $q_join .= "
-      LEFT JOIN pet_like pl
-        ON pl.id_pet = p.id
-        AND p.id_usuario = {$id_usuario}";
-      $q_where .= " AND pl.id_pet IS NULL";
+      $q_where .= "
+       AND pl.id_pet IS NULL";
     }
 
     $query = "
-    SELECT p.id, p.nome, p.descricao, p.url_foto 
+    SELECT 
+      p.id, p.nome, p.descricao, p.url_foto,
+      pl.like
+    {$q_select}
     FROM pet p
+    LEFT JOIN pet_like pl ON pl.id_pet = p.id
+      AND pl.id_usuario = {$id_usuario}
     {$q_join}
     WHERE p.ativo = 'S'
       {$q_where}
@@ -98,15 +101,53 @@ class PetController {
     $id_pet = $dados['id_pet'];
     $id_usuario = Env::Get('id_usuario');
 
+    $query_del = "
+    DELETE FROM pet_like
+    WHERE id_usuario = {$id_usuario}
+      AND id_pet = {$id_pet}";
+
     $query = "
     INSERT INTO pet_like (
-      id_usuario, id_pet, like
+      id_usuario, id_pet, `like`
     ) VALUES (
       {$id_usuario}, {$id_pet}, 'S'
     )";
 
     DB::getConnection();
 
+    DB::execute($query_del);
+    $rs = DB::execute($query);
+
+    if (!$rs) {
+      throw new SPException(500, "erro_query");
+    }
+
+    return true;
+  }
+  public static function dislike($dados) {
+
+    if (!isset($dados['id_pet']) || empty($dados['id_pet'])) {
+      throw new SPException(500, "sem_pet");
+    }
+
+    $id_pet = $dados['id_pet'];
+    $id_usuario = Env::Get('id_usuario');
+
+    $query_del = "
+    DELETE FROM pet_like
+    WHERE id_usuario = {$id_usuario}
+      AND id_pet = {$id_pet}";
+
+    $query = "
+    INSERT INTO pet_like (
+      id_usuario, id_pet, `like`
+    ) VALUES (
+      {$id_usuario}, {$id_pet}, 'N'
+    )";
+
+    DB::getConnection();
+
+    DB::execute($query_del);
     $rs = DB::execute($query);
 
     if (!$rs) {

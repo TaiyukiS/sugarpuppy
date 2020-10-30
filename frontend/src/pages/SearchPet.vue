@@ -3,6 +3,7 @@
     <h6 v-if="msgPesquisando">Pesquisando...</h6>
     <h6 v-if="msgZeroResults">Sem Resultados</h6>
     <q-carousel
+      ref="carrosel"
       v-model="slide"
       slide="style"
       swipeable
@@ -12,15 +13,26 @@
       padding
       height="460px"
       class="q-mb-md"
+      @transition="transitioned"
     >
       <q-carousel-slide 
         v-for="pet in petList"
         :key="pet.id"
         :name="pet.id">
         <a @click="$router.push('/pet');" >
-          <img alt="Foto do Perfil"
-            class="profile-picture"
-            :src="pet.url_foto">
+          <figure class="relative-position">
+            <q-icon v-if="pet.loading" 
+              class="marked-pet" name="sync" />
+            <q-icon v-if="pet.like === 'N'" 
+              class="marked-pet"
+              color="negative" name="close" />
+            <q-icon v-if="pet.like === 'S'" 
+              class="marked-pet"
+              color="primary" name="done" />
+            <img alt="Foto do Perfil"
+              class="profile-picture"
+              :src="pet.url_foto">
+          </figure>
           <h4 class="text-center">{{pet.nome}}</h4>
         </a>
         <article>{{pet.descricao}}</article>
@@ -28,10 +40,14 @@
     </q-carousel>
     <div class="buttons flex q-mb-md q-px-sm">
       <q-btn v-if="petList.length > 0"
+        @click="dislikePet"
+        :disable="blockDislike"
         rounded color="negative" icon="close" />
       <q-btn rounded class="mini" icon="settings" 
         @click="configAberta = true" />
       <q-btn v-if="petList.length > 0"
+        @click="likePet"
+        :disable="blockLike"
         rounded color="primary" icon="done" />
     </div>
     <q-dialog
@@ -148,6 +164,28 @@
 <script>
 import { PetService } from '../services/pets'
 
+const markSync = (slide) => (pet) => {
+  if (pet.id === slide) {
+    pet.loading = true
+    pet.like = null
+  }
+  return pet
+}
+const markLiked = (slide) => (pet) => {
+  if (pet.id === slide) {
+    pet.loading = false
+    pet.like = 'S'
+  }
+  return pet
+}
+const markDisliked = (slide) => (pet) => {
+  if (pet.id === slide) {
+    pet.loading = false
+    pet.like = 'N'
+  }
+  return pet
+}
+
 export default {
   name: 'SearchPet',
   data () {
@@ -156,6 +194,8 @@ export default {
       msgPesquisando: false,
       msgZeroResults: false,
       configAberta: false,
+      blockLike: false,
+      blockDislike: false,
       petList: [],
       listaAnimal: [],
       filtroAnimal: null,
@@ -177,7 +217,7 @@ export default {
   mounted () {
     this.msgPesquisando = true
     this.msgZeroResults = false
-    PetService.getPets({
+    PetService.get({
       nao_vinculado: true
     })
       .then(pets => {
@@ -204,6 +244,37 @@ export default {
       this[`filtro${filtro}`] = valor
       this[`filtro${filtro}Exibicao`] = valor.nome
     },
+    transitioned () {
+      this.blockLike = false
+      this.blockDislike = false
+      const pet = this.petList.filter(
+        (pet) => pet.id === this.slide
+      )
+      if (pet[0].like === 'S') {
+        this.blockLike = true
+      }
+      if (pet[0].like === 'N') {
+        this.blockDislike = true
+      }
+    },
+    likePet () {
+      const index = this.slide
+      this.petList = this.petList.map(markSync(index))
+      PetService.like(index)
+        .then((res) => {
+          this.petList = this.petList.map(markLiked(index))
+        })
+      this.$refs.carrosel.next()
+    },
+    dislikePet () {
+      const index = this.slide
+      this.petList = this.petList.map(markSync(index))
+      PetService.dislike(index)
+        .then((res) => {
+          this.petList = this.petList.map(markDisliked(index))
+        })
+      this.$refs.carrosel.next()
+    },
     limparFiltros () {
       this.filtroAnimal = null
       this.filtroAnimalExibicao = ''
@@ -221,7 +292,7 @@ export default {
       this.configAberta = false
       this.msgPesquisando = true
       this.msgZeroResults = false
-      PetService.getPets({
+      PetService.get({
         animal: (this.filtroAnimal) ? this.filtroAnimal.id : null,
         raca: (this.filtroRaca) ? this.filtroRaca.id : null,
         cor: (this.filtroCor) ? this.filtroCor.id : null,
@@ -243,6 +314,10 @@ export default {
 }
 </script>
 <style type="text/css" scoped>
+  @keyframes bump {
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+  }
   .q-page-container > div {
     flex-direction: column;
   }
@@ -255,6 +330,31 @@ export default {
     background-size: cover;
     height: 160px;
     margin-bottom: 50px;
+  }
+  .marked-pet {
+    position: absolute;
+    font-size: 50px;
+    background: #FFFFFF;
+    border: 1px solid #000000;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    margin-top: -45px;
+    margin-left: -15px;
+    animation: bump 2s linear infinite;
+  }
+  .marked-pet.text-primary {
+    border-color: #528124;
+  }
+  .marked-pet.text-negative {
+    border-color: #C10015;
+  }
+  .marked-pet.text-negative {
+    border-color: #C10015;
+  }
+  figure {
+    margin: 0;
+    padding: 0;
   }
   .profile-picture {
     display: block;

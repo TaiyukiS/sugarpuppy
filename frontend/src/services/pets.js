@@ -1,8 +1,20 @@
 import { axiosInstance as axios } from 'src/boot/axios'
 
-function getPets (filtros) {
+function get (filtros) {
   return axios
     .get('/pets', { params: filtros })
+    .catch((error) => Promise.reject(error))
+}
+
+function like (idPet) {
+  return axios
+    .post(`/pets/${idPet}/like`)
+    .catch((error) => Promise.reject(error))
+}
+
+function dislike (idPet) {
+  return axios
+    .post(`/pets/${idPet}/dislike`)
     .catch((error) => Promise.reject(error))
 }
 
@@ -13,6 +25,8 @@ function getCaracteristicas () {
 }
 
 export const PetService = {
-  getPets,
+  get,
+  like,
+  dislike,
   getCaracteristicas
 }
