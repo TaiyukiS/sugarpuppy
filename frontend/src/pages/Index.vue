@@ -1,5 +1,15 @@
 <template>
   <q-page>
+    <div class="poster q-pa-md text-right">
+      <q-input
+        v-model="post_text"
+        outlined
+        autogrow
+        label="O que você quer compartilhar?"
+      />
+      <q-btn color="primary" label="Publicar" 
+        class="q-mt-sm" />
+    </div>
     <div 
       v-for="post in posts"
       :key="post.postId"
@@ -14,23 +24,23 @@
       <article class="q-my-sm">
         {{post.content}}
       </article>
-      <div class="gallery">
-        <img alt="Foto do Pet"
-          :src="post.mainPhoto"
-          :class="
-            (post.morePhotos.length == 0) ? 'single-photo' : ''
-          "
+      <div v-if="post.photo" class="gallery">
+        <img alt="Foto do Post"
+          :src="post.photo"
           v-on:dblclick="toogleLike(post.postId)">
         <img alt="Amei"
           :class="'heart-photo ' + (post.liked ? 'liked' : '')"
           src="~assets/coracao.svg">
-        <div>
-          <img alt="Foto do Pet"
-            v-for="photo in post.morePhotos"
-            :src="photo.url"
-            :key="photo.id">
-        </div>
       </div>
+      <q-btn 
+        unelevated 
+        rounded
+        :outline="!post.liked"
+        :class="'like-count q-mt-md ' + (post.liked ? 'liked' : '')"
+        color="negative" 
+        icon="favorite_border" 
+        :label="post.likes" 
+        @click="toogleLike(post.postId)" />
     </div>
   </q-page>
 </template>
@@ -44,10 +54,8 @@ const postsList = [
     profilePicture: 'img/ehmole.jpg',
     userName: 'Nome Pet',
     content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    mainPhoto: 'img/ehmole.jpg',
-    morePhotos: [
-      { id: 1, url: 'img/ehmole.jpg' }
-    ]
+    photo: 'img/ehmole.jpg',
+    likes: 0
   },
   {
     postId: 2,
@@ -55,12 +63,8 @@ const postsList = [
     profilePicture: 'img/cachorro2.jpg',
     userName: 'Nome Pet',
     content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    mainPhoto: 'img/cachorro2.jpg',
-    morePhotos: [
-      { id: 2, url: 'img/cachorro2.jpg' },
-      { id: 3, url: 'img/cachorro2.jpg' },
-      { id: 4, url: 'img/cachorro2.jpg' }
-    ]
+    photo: 'img/cachorro2.jpg',
+    likes: 455
   },
   {
     postId: 3,
@@ -68,8 +72,8 @@ const postsList = [
     profilePicture: 'img/ehmole.jpg',
     userName: 'Nome Pet',
     content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    mainPhoto: 'img/ehmole.jpg',
-    morePhotos: []
+    photo: null,
+    likes: 12
   }
 ]
 
@@ -77,6 +81,7 @@ export default {
   name: 'PageIndex',
   data () {
     return {
+      post_text: '',
       posts: postsList
     }
   },
@@ -84,6 +89,11 @@ export default {
     toogleLike (postId) {
       for (let i = 0; i < this.posts.length; i++) {
         if (this.posts[i].postId === postId) {
+          if (this.posts[i].liked) {
+            this.posts[i].likes--
+          } else {
+            this.posts[i].likes++
+          }
           this.posts[i].liked = !this.posts[i].liked
           break
         }
@@ -93,8 +103,15 @@ export default {
 }
 </script>
 <style type="text/css" scoped>
+  @keyframes bump {
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+  }
   .q-page {
-    padding: 20px 0;
+    padding: 0 0 20px 0;
+  }
+  .poster {
+    padding-bottom: 20px;
   }
   .post {
     align-items: end;
@@ -125,46 +142,31 @@ export default {
     position: relative;
     display: flex;
     width: 100%;
-    justify-content: space-between;
+    justify-content: center;
   }
   .gallery img {
     cursor: pointer;
-  }
-  .gallery > img {
-    width: 305px;
-    height: 305px;
+    width: 400px;
   }
   .gallery .heart-photo {
     position: absolute;
     width: 80px;
     height: 80px;
-    top: 112px;
-    left: 112px;
+    top: 50%;
+    left: 50%;
+    margin-top: -40px;
+    margin-left: -40px;
     z-index: -1;
     pointer-events: none;
-  }
-  .gallery > .single-photo + .heart-photo {
-    top: 170px;
-    left: 170px;
+    animation: bump 2s linear infinite;
   }
   .gallery .heart-photo.liked {
     z-index: 1;
   }
-  .gallery .single-photo {
-    margin: 0 auto;
-    width: 420px;
-    height: 420px;
+  .post .like-count {
+    animation: bump 2s linear infinite;
   }
-  .gallery > div {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-  }
-  .gallery > div > img {
-    width: 110px;
-    height: 90px;
-  }
-  .gallery > div > img + img {
-    margin-top: 15px;
+  .post .like-count.liked {
+    animation: none;
   }
 </style>
