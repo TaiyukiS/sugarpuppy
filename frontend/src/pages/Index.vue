@@ -1,47 +1,53 @@
 <template>
   <q-page>
-    <div class="poster q-pa-md text-right">
-      <q-input
-        v-model="post_text"
-        outlined
-        autogrow
-        label="O que você quer compartilhar?"
-      />
-      <q-btn color="primary" label="Publicar" 
-        class="q-mt-sm" />
-    </div>
-    <div 
-      v-for="post in posts"
-      :key="post.postId"
-      class="flex post q-py-md q-px-lg">
-      <a @click="$router.push('/pet');" 
-        class="flex flex-center">
-        <img alt="Foto do Pet"
-          class="profile-picture"
-          :src="post.profilePicture">
-        <p class="q-ma-none q-ml-sm">{{post.userName}}</p>
-      </a>
-      <article class="q-my-sm">
-        {{post.content}}
-      </article>
-      <div v-if="post.photo" class="gallery">
-        <img alt="Foto do Post"
-          :src="post.photo"
-          v-on:dblclick="toogleLike(post.postId)">
-        <img alt="Amei"
-          :class="'heart-photo ' + (post.liked ? 'liked' : '')"
-          src="~assets/coracao.svg">
+    <q-pull-to-refresh @refresh="buscarPost">
+      <div class="poster q-py-md">
+        <q-input
+          v-model="post_text"
+          outlined
+          autogrow
+          label="O que você quer compartilhar?"
+        />
+        <q-btn label="Adicionar foto" 
+          class="q-mt-sm" />
+        <q-btn color="primary" label="Publicar" 
+          class="q-mt-sm float-right" />
       </div>
-      <q-btn 
-        unelevated 
-        rounded
-        :outline="!post.liked"
-        :class="'like-count q-mt-md ' + (post.liked ? 'liked' : '')"
-        color="negative" 
-        icon="favorite_border" 
-        :label="post.likes" 
-        @click="toogleLike(post.postId)" />
-    </div>
+      <div 
+        v-for="post in posts"
+        :key="post.postId"
+        class="flex post q-py-md">
+        <a @click="$router.push('/pet');" 
+          class="flex flex-center q-px-lg">
+          <img alt="Foto do Pet"
+            class="profile-picture"
+            :src="post.profilePicture">
+          <p class="q-ma-none q-ml-sm">{{post.userName}}</p>
+        </a>
+        <article class="q-my-sm q-px-lg">
+          {{post.content}}
+        </article>
+        <div v-if="post.photo" class="gallery">
+          <img alt="Foto do Post"
+            :src="post.photo"
+            v-on:dblclick="toogleLike(post.postId)">
+          <img alt="Amei"
+            :class="'heart-photo ' + (post.liked ? 'liked' : '')"
+            src="~assets/coracao.svg">
+        </div>
+        <div class="q-px-lg">
+          <q-btn 
+            unelevated 
+            rounded
+            :outline="!post.liked"
+            :class="'like-count q-mt-md ' + (post.liked ? 'liked' : '')"
+            color="negative" 
+            icon="favorite_border" 
+            :label="post.likes" 
+            @click="toogleLike(post.postId)" />
+        </div>
+      </div>
+    </q-pull-to-refresh>
   </q-page>
 </template>
 
@@ -98,6 +104,10 @@ export default {
           break
         }
       }
+    },
+    buscarPost (done) {
+      console.log('a')
+      done()
     }
   }
 }
@@ -146,7 +156,7 @@ export default {
   }
   .gallery img {
     cursor: pointer;
-    width: 400px;
+    width: 100%;
   }
   .gallery .heart-photo {
     position: absolute;
