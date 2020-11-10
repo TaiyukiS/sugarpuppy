@@ -6,6 +6,8 @@ use \SugarPuppy\SPException;
 
 class PetController {
   public static function buscar($filtros) {
+    $id_usuario = Env::Get('id_usuario');
+    
     $q_select = "";
     $q_join = "";
     $q_where = "";
@@ -26,7 +28,6 @@ class PetController {
       $q_where .= " AND id_cidade = ".$filtros['cidade'];
 
     if (isset($filtros['nao_vinculado'])) {
-      $id_usuario = Env::Get('id_usuario');
       $q_where .= "
        AND pl.id_pet IS NULL";
     }

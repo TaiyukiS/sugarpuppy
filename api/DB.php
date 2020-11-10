@@ -37,8 +37,12 @@ class DB {
 
   /* Operação para inserção */
   public static function getInsertedID($query) {
-    static::execute($query);
-    return static::$instance->insert_id;
+    $rs = static::execute($query);
+    if (!$rs) {
+      return false;
+    } else {
+      return static::$instance->insert_id;
+    }
   }
 
   public static function execute($query) {

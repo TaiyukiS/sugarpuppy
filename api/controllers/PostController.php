@@ -9,6 +9,9 @@ class PostController {
     $q_join = "";
     $q_where = "";
 
+    if (isset($filtros['post']))
+      $q_where .= " AND p.id = ".$filtros['post'];
+
     if (isset($filtros['pet']))
       $q_where .= " AND p.id_pet = ".$filtros['pet'];
 
@@ -57,6 +60,10 @@ class PostController {
       $url_foto = "'".addslashes($dados['url_foto'])."'";
     }
 
+    if ($conteudo == 'NULL' && $url_foto == 'NULL') {
+      throw new SPException(500, "erro_vazio");
+    }
+
     $id_usuario = Env::Get('id_usuario');
 
     $query = "
@@ -68,13 +75,21 @@ class PostController {
 
     DB::getConnection();
 
-    $rs = DB::execute($query);
+    $id_post = DB::getInsertedID($query);
 
-    if (!$rs) {
+    if (!$id_post) {
       throw new SPException(500, "erro_query");
     }
 
-    return true;
+    $response = false;
+
+    try {
+      $response = static::buscar([ 'post' => $id_post ])[0];
+    } catch (Exception $e) {
+      // Do nothing
+    }
+
+    return $response;
   }
   public static function like($dados) {
 

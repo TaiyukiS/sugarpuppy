@@ -31,15 +31,18 @@
       
       $response_obj = [];
       $body = $request->getParsedBody();
-      $body['id_pet'] = $args['id_pet'];
       
       try {
-        PostController::publicar($body);
+        $post = PostController::publicar($body);
         $response_obj['status'] = 200;
         $response_obj['msg'] = 'ok';
+        if ($post) {
+          $response_obj['dados'] = $post;
+        }
 
       } catch (Exception $e) {
         $response_obj = SPException::catch($e, [
+          'erro_vazio' => [500, 'post_vazio'],
           'erro_query' => [500, 'erro_insercao']
         ]);
       }

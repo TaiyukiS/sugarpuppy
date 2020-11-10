@@ -30,7 +30,7 @@ class SPException extends \Exception {
   }
 
   public static function catch($e, $exceptionMap = []) {
-    if (!($e instanceof MVException)) {
+    if (!($e instanceof SPException)) {
       return [
         'status' => 500,
         'msg' => 'internal_error'

@@ -8,10 +8,30 @@
           autogrow
           label="O que você quer compartilhar?"
         />
-        <q-btn label="Adicionar foto" 
-          class="q-mt-sm" />
-        <q-btn color="primary" label="Publicar" 
-          class="q-mt-sm float-right" />
+        <div class="q-mt-sm">
+          <q-btn label="Adicionar foto" 
+          v-if="!show_add_img"
+          @click="show_add_img = true"
+          class="q-mr-sm" unelevated outline />
+          <q-input
+            v-if="show_add_img"
+            v-model="post_img"
+            outlined
+            dense
+            label="Link da foto"
+            class="q-mr-sm"
+          />
+          <q-btn v-if="show_add_img"
+            @click="show_add_img = false"
+            label="Cancelar" class="q-mr-sm" 
+            unelevated outline />
+          <q-btn color="primary" label="Publicar" 
+            @click="publicar"
+            class="float-right" />
+        </div>
+        <h6 v-if="msgPublishing" class="text-center">Publicando...</h6>
+        <h6 v-if="msgOK" class="text-center">Publicado!</h6>
+        <h6 v-if="msgError" class="text-center text-negative">Ops! Não foi possível publicar.</h6>
       </div>
       <div 
         v-for="post in posts"
@@ -52,6 +72,7 @@
 </template>
 
 <script>
+import { PostService } from '../services/posts'
 
 const postsList = [
   {
@@ -88,6 +109,11 @@ export default {
   data () {
     return {
       post_text: '',
+      post_img: '',
+      show_add_img: false,
+      msgPublishing: false,
+      msgOK: false,
+      msgError: false,
       posts: postsList
     }
   },
@@ -104,6 +130,47 @@ export default {
           break
         }
       }
+    },
+    publicar () {
+      const post = {
+        conteudo: this.post_text
+      }
+      if (this.show_add_img) {
+        post.url_foto = this.post_img
+      }
+
+      this.msgPublishing = true
+      this.msgOK = false
+      this.msgError = false
+
+      PostService.publicar(post)
+        .then((res) => {
+          this.posts.push(res)
+          this.sucessoPublicar()
+        })
+        .catch(() => {
+          this.erroPublicar()
+        })
+    },
+    sucessoPublicar () {
+      this.show_add_img = false
+      this.post_text = ''
+      this.post_img = ''
+      this.msgPublishing = false
+      this.msgOK = true
+      setTimeout(() => {
+        this.msgOK = false
+      }, 2000)
+    },
+    erroPublicar () {
+      this.show_add_img = false
+      this.post_text = ''
+      this.post_img = ''
+      this.msgPublishing = false
+      this.msgError = true
+      setTimeout(() => {
+        this.msgError = false
+      }, 2000)
     },
     buscarPost (done) {
       console.log('a')
@@ -122,6 +189,17 @@ export default {
   }
   .poster {
     padding-bottom: 20px;
+  }
+  .poster > div > * {
+    vertical-align: top;
+  }
+  .poster > div > .q-input {
+    display: inline-block;
+    width: 260px;
+  }
+  .poster h6 {
+    margin: 20px 0 0 0;
+    color: #528124;
   }
   .post {
     align-items: end;
