@@ -43,7 +43,7 @@
         @click="dislikePet"
         :disable="blockDislike"
         rounded color="negative" icon="close" />
-      <q-btn rounded class="mini" icon="settings" 
+      <q-btn rounded class="mini" icon="tune" 
         @click="configAberta = true" />
       <q-btn v-if="petList.length > 0"
         @click="likePet"

@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <q-pull-to-refresh @refresh="buscarPost">
+    <q-pull-to-refresh @refresh="buscarPosts">
       <div class="poster q-py-md">
         <q-input
           v-model="post_text"
@@ -33,38 +33,61 @@
         <h6 v-if="msgOK" class="text-center">Publicado!</h6>
         <h6 v-if="msgError" class="text-center text-negative">Ops! Não foi possível publicar.</h6>
       </div>
+      <h6 v-if="msgSearching" class="text-center">Buscando...</h6>
       <div 
         v-for="post in posts"
-        :key="post.postId"
+        :key="post.id"
         class="flex post q-py-md">
         <a @click="$router.push('/pet');" 
-          class="flex flex-center q-px-lg">
+          class="flex flex-center q-px-lg heading">
           <img alt="Foto do Pet"
             class="profile-picture"
-            :src="post.profilePicture">
-          <p class="q-ma-none q-ml-sm">{{post.userName}}</p>
+            :src="post.foto_poster">
+          <p class="q-ma-none q-ml-sm">{{post.nome_poster}}</p>
+          <span>{{formatDate(post.data_cadastro)}}</span>
         </a>
         <article class="q-my-sm q-px-lg">
-          {{post.content}}
+          {{post.conteudo}}
         </article>
-        <div v-if="post.photo" class="gallery">
+        <div v-if="post.url_foto" class="gallery">
           <img alt="Foto do Post"
-            :src="post.photo"
-            v-on:dblclick="toogleLike(post.postId)">
+            :src="post.url_foto"
+            v-on:dblclick="toogleLike(post.id)">
           <img alt="Amei"
-            :class="'heart-photo ' + (post.liked ? 'liked' : '')"
+            v-if="post.liked"
+            class="heart-photo"
             src="~assets/coracao.svg">
         </div>
-        <div class="q-px-lg">
+        <div class="q-px-lg q-mt-md">
           <q-btn 
             unelevated 
             rounded
             :outline="!post.liked"
-            :class="'like-count q-mt-md ' + (post.liked ? 'liked' : '')"
+            :class="'like-count ' + (post.liked ? 'liked' : '')"
             color="negative" 
             icon="favorite_border" 
-            :label="post.likes" 
-            @click="toogleLike(post.postId)" />
+            :label="post.qtd_amei" 
+            @click="toogleLike(post.id)" />
+          <q-btn 
+            unelevated 
+            outline
+            class="float-right"
+            icon="create">
+            <q-menu>
+              <q-list>
+                <q-item clickable v-close-popup>
+                  <q-item-section
+                    @click="editarPost(post.id)"
+                  >Editar</q-item-section>
+                </q-item>
+                <q-item clickable v-close-popup>
+                  <q-item-section
+                    @click="apagarPost(post.id)"
+                  >Apagar</q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
+          </q-btn>
         </div>
       </div>
     </q-pull-to-refresh>
@@ -72,37 +95,8 @@
 </template>
 
 <script>
+import { date } from 'quasar'
 import { PostService } from '../services/posts'
-
-const postsList = [
-  {
-    postId: 1,
-    liked: false,
-    profilePicture: 'img/ehmole.jpg',
-    userName: 'Nome Pet',
-    content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    photo: 'img/ehmole.jpg',
-    likes: 0
-  },
-  {
-    postId: 2,
-    liked: true,
-    profilePicture: 'img/cachorro2.jpg',
-    userName: 'Nome Pet',
-    content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    photo: 'img/cachorro2.jpg',
-    likes: 455
-  },
-  {
-    postId: 3,
-    liked: false,
-    profilePicture: 'img/ehmole.jpg',
-    userName: 'Nome Pet',
-    content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    photo: null,
-    likes: 12
-  }
-]
 
 export default {
   name: 'PageIndex',
@@ -114,20 +108,37 @@ export default {
       msgPublishing: false,
       msgOK: false,
       msgError: false,
-      posts: postsList
+      msgSearching: false,
+      posts: []
     }
   },
+  mounted () {
+    this.buscarPosts()
+  },
   methods: {
+    formatDate (dateStr) {
+      return date.formatDate(new Date(dateStr), 'DD/MM/YYYY HH:mm')
+    },
     toogleLike (postId) {
+      let liked = null
       for (let i = 0; i < this.posts.length; i++) {
-        if (this.posts[i].postId === postId) {
+        if (this.posts[i].id === postId) {
           if (this.posts[i].liked) {
-            this.posts[i].likes--
+            this.posts[i].qtd_amei--
           } else {
-            this.posts[i].likes++
+            this.posts[i].qtd_amei++
           }
           this.posts[i].liked = !this.posts[i].liked
+          liked = this.posts[i].liked
           break
+        }
+      }
+
+      if (liked !== null) {
+        if (liked) {
+          PostService.like(postId)
+        } else {
+          PostService.dislike(postId)
         }
       }
     },
@@ -172,9 +183,24 @@ export default {
         this.msgError = false
       }, 2000)
     },
-    buscarPost (done) {
-      console.log('a')
-      done()
+    buscarPosts (done) {
+      this.msgSearching = true
+      PostService.get()
+        .then((newPosts) => {
+          this.posts = newPosts
+          if (done) {
+            done()
+          }
+        })
+        .finally(() => {
+          this.msgSearching = false
+        })
+    },
+    editarPost (postId) {
+
+    },
+    apagarPost (postId) {
+
     }
   }
 }
@@ -197,7 +223,7 @@ export default {
     display: inline-block;
     width: 260px;
   }
-  .poster h6 {
+  h6 {
     margin: 20px 0 0 0;
     color: #528124;
   }
@@ -209,12 +235,22 @@ export default {
   .post + .post {
     margin-top: 20px;
   }
+  .post > * {
+    width: 100%;
+  }
+  .post .heading {
+    justify-content: flex-start;
+  }
   .post a {
     cursor: pointer;
   }
   .post p {
+    flex: 1;
     font-size: 20px;
     color: #528124;
+  }
+  .post span {
+    align-self: flex-start;
   }
   .post .profile-picture {
     width: 50px;
@@ -247,8 +283,6 @@ export default {
     z-index: -1;
     pointer-events: none;
     animation: bump 2s linear infinite;
-  }
-  .gallery .heart-photo.liked {
     z-index: 1;
   }
   .post .like-count {

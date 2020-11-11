@@ -17,13 +17,20 @@ class PostController {
 
     $query = "
     SELECT 
-      p.id, p.conteudo, p.qtd_amei, p.data_cadastro,
+      p.id, p.conteudo, p.qtd_amei, p.url_foto, p.data_cadastro,
       p.id_usuario, p.id_pet,
       (CASE
         WHEN p.id_pet IS NOT NULL THEN pp.nome
         ELSE u.nome
       END) as nome_poster,
-      pr.reacao
+      (CASE
+        WHEN p.id_pet IS NOT NULL THEN pp.url_foto
+        ELSE u.url_foto
+      END) as foto_poster,
+      (CASE
+        WHEN pr.reacao IS NOT NULL THEN 1
+        ELSE NULL
+      END) as liked
     FROM post p
     INNER JOIN usuario u ON u.id = p.id_usuario
     LEFT JOIN pet pp ON pp.id = p.id_pet
@@ -107,9 +114,19 @@ class PostController {
       {$id_usuario}, {$id_post}, 1
     )";
 
+    $query_up = "
+    UPDATE post SET
+      qtd_amei = (
+        SELECT count(1) FROM post_reacao
+        WHERE id_post = {$id_post}
+      )
+    WHERE id = {$id_post}";
+
     DB::getConnection();
 
     $rs = DB::execute($query);
+
+    DB::execute($query_up);
 
     if (!$rs) {
       throw new SPException(500, "erro_query");
@@ -131,9 +148,19 @@ class PostController {
     WHERE id_usuario = {$id_usuario}
       AND id_post = {$id_post}";
 
+    $query_up = "
+    UPDATE post SET
+      qtd_amei = (
+        SELECT count(1) FROM post_reacao
+        WHERE id_post = {$id_post}
+      )
+    WHERE id = {$id_post}";
+
     DB::getConnection();
 
     $rs = DB::execute($query);
+
+    DB::execute($query_up);
 
     if (!$rs) {
       throw new SPException(500, "erro_query");
