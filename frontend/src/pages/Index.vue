@@ -30,8 +30,6 @@
             class="float-right" />
         </div>
         <h6 v-if="msgPublishing" class="text-center">Publicando...</h6>
-        <h6 v-if="msgOK" class="text-center">Publicado!</h6>
-        <h6 v-if="msgError" class="text-center text-negative">Ops! Não foi possível publicar.</h6>
       </div>
       <h6 v-if="msgSearching" class="text-center">Buscando...</h6>
       <div 
@@ -77,7 +75,7 @@
               <q-list>
                 <q-item clickable v-close-popup>
                   <q-item-section
-                    @click="editarPost(post.id)"
+                    @click="abrirEdicao(post.id)"
                   >Editar</q-item-section>
                 </q-item>
                 <q-item clickable v-close-popup>
@@ -91,6 +89,65 @@
         </div>
       </div>
     </q-pull-to-refresh>
+    <q-dialog
+      :value="show_edit_post"
+      @input="fecharEdicao()"
+    >
+      <q-card style="width: 700px; max-width: 80vw;">
+        <q-card-section class="post">
+          <div class="flex flex-center q-px-lg heading">
+            <img alt="Foto do Pet"
+              class="profile-picture"
+              :src="postEdit.foto_poster">
+            <p class="q-ma-none q-ml-sm">{{postEdit.nome_poster}}</p>
+            <span>{{formatDate(postEdit.data_cadastro)}}</span>
+          </div>
+          <div class="poster">
+            <q-input
+              v-model="postEdit.conteudo"
+              class="q-my-sm q-px-lg"
+              outlined
+              autogrow
+            />
+            <div class="q-mt-sm q-px-lg">
+              <q-btn label="Adicionar foto" 
+              v-if="!show_add_img_edit"
+              @click="show_add_img_edit = true"
+              class="q-mr-sm" unelevated outline />
+              <q-input
+                v-if="show_add_img_edit"
+                v-model="postEdit.url_foto"
+                outlined
+                dense
+                label="Link da foto"
+                class="q-mr-sm"
+              />
+              <q-btn v-if="show_add_img_edit"
+                @click="show_add_img_edit = false"
+                label="Cancelar" class="q-mr-sm" 
+                unelevated outline />
+            </div>
+          </div>
+          <div v-if="postEdit.url_foto && show_add_img_edit" class="gallery">
+            <img alt="Foto do Post"
+              :src="postEdit.url_foto">
+          </div>
+        </q-card-section>
+        <q-card-actions align="center">
+          <q-btn
+            unelevated
+            @click="fecharEdicao"
+            label="Cancelar"
+          />
+          <q-btn
+            unelevated
+            color="primary"
+            @click="fecharEdicao"
+            label="Atualizar"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -105,11 +162,12 @@ export default {
       post_text: '',
       post_img: '',
       show_add_img: false,
+      show_add_img_edit: false,
+      show_edit_post: false,
       msgPublishing: false,
-      msgOK: false,
-      msgError: false,
       msgSearching: false,
-      posts: []
+      posts: [],
+      postEdit: {}
     }
   },
   mounted () {
@@ -151,8 +209,6 @@ export default {
       }
 
       this.msgPublishing = true
-      this.msgOK = false
-      this.msgError = false
 
       PostService.publicar(post)
         .then((res) => {
@@ -168,20 +224,20 @@ export default {
       this.post_text = ''
       this.post_img = ''
       this.msgPublishing = false
-      this.msgOK = true
-      setTimeout(() => {
-        this.msgOK = false
-      }, 2000)
+      this.$q.notify({
+        message: 'Publicado!',
+        color: 'primary'
+      })
     },
     erroPublicar () {
       this.show_add_img = false
       this.post_text = ''
       this.post_img = ''
       this.msgPublishing = false
-      this.msgError = true
-      setTimeout(() => {
-        this.msgError = false
-      }, 2000)
+      this.$q.notify({
+        message: 'Ops! Houve algum erro',
+        color: 'negative'
+      })
     },
     buscarPosts (done) {
       this.msgSearching = true
@@ -196,8 +252,31 @@ export default {
           this.msgSearching = false
         })
     },
+    abrirEdicao (postId) {
+      const post = this.posts.filter((post) => {
+        return post.id === postId
+      })
+      if (post.length > 0) {
+        this.postEdit = post[0]
+        this.show_add_img_edit = false
+        if (this.postEdit.url_foto) {
+          this.show_add_img_edit = true
+        }
+        this.show_edit_post = true
+      }
+    },
+    fecharEdicao () {
+      this.show_add_img_edit = false
+      this.show_edit_post = false
+      this.postEdit = {}
+    },
     editarPost (postId) {
-
+      for (let i = 0; i < this.posts.length; i++) {
+        if (this.posts[i].id === postId) {
+          this.posts[i] = this.postEdit
+          break
+        }
+      }
     },
     apagarPost (postId) {
 
@@ -231,6 +310,10 @@ export default {
     align-items: end;
     flex-direction: column;
     background: rgba(213, 209, 112, 0.15);
+  }
+  .post.q-card__section {
+    padding: 20px 0;
+    background: #FFFFFF;
   }
   .post + .post {
     margin-top: 20px;

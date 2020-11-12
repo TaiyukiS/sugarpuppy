@@ -84,7 +84,48 @@
 
       } catch (Exception $e) {
         $response_obj = SPException::catch($e, [
-          'sem_pet' => [500, 'id_post_vazio'],
+          'sem_post' => [500, 'id_post_vazio'],
+          'erro_query' => [500, 'erro_insercao']
+        ]);
+      }
+
+      echo json_encode($response_obj, JSON_NUMERIC_CHECK);
+    });
+
+    $this->put('/{id_post}', function ($request, $response, $args) {
+      $response_obj = [];
+      $body = $request->getParsedBody();
+      $body['id_post'] = $args['id_post'];
+      
+      try {
+        PostController::editar($body);
+        $response_obj['status'] = 200;
+        $response_obj['msg'] = 'ok';
+
+      } catch (Exception $e) {
+        $response_obj = SPException::catch($e, [
+          'sem_post' => [500, 'id_post_vazio'],
+          'erro_vazio' => [500, 'post_vazio'],
+          'erro_query' => [500, 'erro_insercao']
+        ]);
+      }
+
+      echo json_encode($response_obj, JSON_NUMERIC_CHECK);
+    });
+
+    $this->delete('/{id_post}', function ($request, $response, $args) {
+      $response_obj = [];
+      $id_post = $args['id_post'];
+      
+      try {
+        PostController::editar($id_post);
+        $response_obj['status'] = 200;
+        $response_obj['msg'] = 'ok';
+
+      } catch (Exception $e) {
+        $response_obj = SPException::catch($e, [
+          'sem_post' => [500, 'id_post_vazio'],
+          'erro_vazio' => [500, 'post_vazio'],
           'erro_query' => [500, 'erro_insercao']
         ]);
       }

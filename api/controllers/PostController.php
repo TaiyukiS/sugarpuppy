@@ -39,6 +39,7 @@ class PostController {
     WHERE p.ativo = 'S'
       AND u.ativo = 'S'
       {$q_where}
+    ORDER BY p.data_cadastro DESC
     LIMIT 50";
 
     DB::getConnection();
@@ -161,6 +162,62 @@ class PostController {
     $rs = DB::execute($query);
 
     DB::execute($query_up);
+
+    if (!$rs) {
+      throw new SPException(500, "erro_query");
+    }
+
+    return true;
+  }
+  public static function editar($dados) {
+
+    if (!isset($dados['id_post']) || empty($dados['id_post'])) {
+      throw new SPException(500, "sem_post");
+    }
+    $id_post = $dados['id_post'];
+    $columns = '';
+
+    if (!empty($dados['conteudo'])) {
+      $columns = "conteudo = '".addslashes($dados['conteudo'])."',";
+    }
+
+    if (!empty($dados['url_foto'])) {
+      $columns = "url_foto = '".addslashes($dados['url_foto'])."',";
+    }
+
+    if (empty($columns)) {
+      throw new SPException(500, "erro_vazio");
+    }
+
+    $query = "
+    UPDATE post SET
+      {$columns}
+      data_atualizacao = NOW()
+    WHERE id_post = {$id_post}";
+
+    DB::getConnection();
+
+    $rs = DB::execute($query);
+
+    if (!$rs) {
+      throw new SPException(500, "erro_query");
+    }
+
+    return true;
+  }
+  public static function remover($id_post) {
+    if (empty($id_post)) {
+      throw new SPException(500, "sem_post");
+    }
+
+    $query = "
+    UPDATE post SET
+      ativo = 'N',
+      data_atualizacao = NOW()
+    WHERE id_post = {$id_post}";
+
+    DB::getConnection();
+    $rs = DB::execute($query);
 
     if (!$rs) {
       throw new SPException(500, "erro_query");
