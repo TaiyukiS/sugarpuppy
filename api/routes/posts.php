@@ -64,7 +64,7 @@
       } catch (Exception $e) {
         $response_obj = SPException::catch($e, [
           'sem_post' => [500, 'id_post_vazio'],
-          'erro_query' => [500, 'erro_insercao']
+          'erro_query' => [500, 'erro_like']
         ]);
       }
 
@@ -85,7 +85,7 @@
       } catch (Exception $e) {
         $response_obj = SPException::catch($e, [
           'sem_post' => [500, 'id_post_vazio'],
-          'erro_query' => [500, 'erro_insercao']
+          'erro_query' => [500, 'erro_dislike']
         ]);
       }
 
@@ -106,7 +106,7 @@
         $response_obj = SPException::catch($e, [
           'sem_post' => [500, 'id_post_vazio'],
           'erro_vazio' => [500, 'post_vazio'],
-          'erro_query' => [500, 'erro_insercao']
+          'erro_query' => [500, 'erro_atualizacao']
         ]);
       }
 
@@ -118,7 +118,7 @@
       $id_post = $args['id_post'];
       
       try {
-        PostController::editar($id_post);
+        PostController::remover($id_post);
         $response_obj['status'] = 200;
         $response_obj['msg'] = 'ok';
 
@@ -126,7 +126,7 @@
         $response_obj = SPException::catch($e, [
           'sem_post' => [500, 'id_post_vazio'],
           'erro_vazio' => [500, 'post_vazio'],
-          'erro_query' => [500, 'erro_insercao']
+          'erro_query' => [500, 'erro_remocao']
         ]);
       }
 

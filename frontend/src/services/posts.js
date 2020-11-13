@@ -24,9 +24,23 @@ function publicar (body) {
     .catch((error) => Promise.reject(error))
 }
 
+function atualizar (idPost, body) {
+  return axios
+    .put('/posts/' + idPost, body)
+    .catch((error) => Promise.reject(error))
+}
+
+function apagar (idPost) {
+  return axios
+    .delete('/posts/' + idPost)
+    .catch((error) => Promise.reject(error))
+}
+
 export const PostService = {
   get,
   like,
   dislike,
-  publicar
+  publicar,
+  atualizar,
+  apagar
 }

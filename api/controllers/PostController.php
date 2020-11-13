@@ -8,12 +8,16 @@ class PostController {
   public static function buscar($filtros) {
     $q_join = "";
     $q_where = "";
+    $q_offset = "0";
 
     if (isset($filtros['post']))
       $q_where .= " AND p.id = ".$filtros['post'];
 
     if (isset($filtros['pet']))
       $q_where .= " AND p.id_pet = ".$filtros['pet'];
+
+    if (isset($filtros['pagina']))
+      $q_offset = 50*($filtros['pagina']-1);
 
     $query = "
     SELECT 
@@ -40,7 +44,7 @@ class PostController {
       AND u.ativo = 'S'
       {$q_where}
     ORDER BY p.data_cadastro DESC
-    LIMIT 50";
+    LIMIT 50 OFFSET {$q_offset}";
 
     DB::getConnection();
 
@@ -177,12 +181,12 @@ class PostController {
     $id_post = $dados['id_post'];
     $columns = '';
 
-    if (!empty($dados['conteudo'])) {
-      $columns = "conteudo = '".addslashes($dados['conteudo'])."',";
+    if (isset($dados['conteudo'])) {
+      $columns .= "conteudo = '".addslashes($dados['conteudo'])."',";
     }
 
-    if (!empty($dados['url_foto'])) {
-      $columns = "url_foto = '".addslashes($dados['url_foto'])."',";
+    if (isset($dados['url_foto'])) {
+      $columns .= "url_foto = '".addslashes($dados['url_foto'])."',";
     }
 
     if (empty($columns)) {
@@ -193,7 +197,7 @@ class PostController {
     UPDATE post SET
       {$columns}
       data_atualizacao = NOW()
-    WHERE id_post = {$id_post}";
+    WHERE id = {$id_post}";
 
     DB::getConnection();
 
@@ -214,7 +218,7 @@ class PostController {
     UPDATE post SET
       ativo = 'N',
       data_atualizacao = NOW()
-    WHERE id_post = {$id_post}";
+    WHERE id = {$id_post}";
 
     DB::getConnection();
     $rs = DB::execute($query);

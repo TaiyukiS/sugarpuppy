@@ -67,6 +67,7 @@
             :label="post.qtd_amei" 
             @click="toogleLike(post.id)" />
           <q-btn 
+            v-if="temAcessoPost(post)"
             unelevated 
             outline
             class="float-right"
@@ -80,7 +81,7 @@
                 </q-item>
                 <q-item clickable v-close-popup>
                   <q-item-section
-                    @click="apagarPost(post.id)"
+                    @click="abrirRemocao(post.id)"
                   >Apagar</q-item-section>
                 </q-item>
               </q-list>
@@ -88,12 +89,20 @@
           </q-btn>
         </div>
       </div>
+      <h6 v-if="msgSearchingFim" class="text-center">Buscando...</h6>
+      <h6 v-if="msgFim" class="text-center">Fim :)</h6>
+      <div v-if="show_more_btn"
+        class="q-mt-lg text-center">
+        <q-btn @click="buscarMaisPosts"
+          label="Carregar Mais" 
+          unelevated outline />
+      </div>
     </q-pull-to-refresh>
     <q-dialog
       :value="show_edit_post"
       @input="fecharEdicao()"
     >
-      <q-card style="width: 700px; max-width: 80vw;">
+      <q-card style="width: 480px; max-width: 80vw;">
         <q-card-section class="post">
           <div class="flex flex-center q-px-lg heading">
             <img alt="Foto do Pet"
@@ -133,7 +142,7 @@
               :src="postEdit.url_foto">
           </div>
         </q-card-section>
-        <q-card-actions align="center">
+        <q-card-actions class="flex justify-evenly">
           <q-btn
             unelevated
             @click="fecharEdicao"
@@ -142,8 +151,31 @@
           <q-btn
             unelevated
             color="primary"
-            @click="fecharEdicao"
+            @click="editarPost"
             label="Atualizar"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog
+      :value="show_delete_post"
+      @input="fecharRemocao()"
+    >
+      <q-card style="width: 480px; max-width: 80vw;">
+        <q-card-section align="center">
+          <h5>Você tem certeza que deseja apagar esse post?</h5>
+        </q-card-section>
+        <q-card-actions class="flex justify-evenly">
+          <q-btn
+            unelevated
+            @click="fecharRemocao"
+            label="Cancelar"
+          />
+          <q-btn
+            unelevated
+            color="primary"
+            @click="apagarPost"
+            label="Apagar"
           />
         </q-card-actions>
       </q-card>
@@ -154,6 +186,8 @@
 <script>
 import { date } from 'quasar'
 import { PostService } from '../services/posts'
+import LocalStorage from '../services/LocalStorage'
+const dadosUsuario = LocalStorage.get('login')
 
 export default {
   name: 'PageIndex',
@@ -164,10 +198,16 @@ export default {
       show_add_img: false,
       show_add_img_edit: false,
       show_edit_post: false,
+      show_delete_post: false,
+      show_more_btn: false,
       msgPublishing: false,
       msgSearching: false,
+      msgSearchingFim: false,
+      msgFim: false,
+      indexPagina: 1,
       posts: [],
-      postEdit: {}
+      postEdit: {},
+      postDelete: null
     }
   },
   mounted () {
@@ -200,6 +240,12 @@ export default {
         }
       }
     },
+    temAcessoPost (post) {
+      return (
+        dadosUsuario.id_usuario === post.id_usuario ||
+        dadosUsuario.id_pet === post.id_pet
+      )
+    },
     publicar () {
       const post = {
         conteudo: this.post_text
@@ -212,7 +258,7 @@ export default {
 
       PostService.publicar(post)
         .then((res) => {
-          this.posts.push(res)
+          this.posts.unshift(res)
           this.sucessoPublicar()
         })
         .catch(() => {
@@ -243,6 +289,9 @@ export default {
       this.msgSearching = true
       PostService.get()
         .then((newPosts) => {
+          this.indexPagina = 1
+          this.msgFim = false
+          this.show_more_btn = true
           this.posts = newPosts
           if (done) {
             done()
@@ -252,12 +301,30 @@ export default {
           this.msgSearching = false
         })
     },
+    buscarMaisPosts () {
+      this.msgSearchingFim = true
+      this.show_more_btn = false
+      this.indexPagina++
+      PostService.get({ pagina: this.indexPagina })
+        .then((newPosts) => {
+          if (newPosts.length === 0) {
+            this.msgFim = true
+            this.show_more_btn = false
+          } else {
+            this.show_more_btn = true
+            this.posts.push(...newPosts)
+          }
+        })
+        .finally(() => {
+          this.msgSearchingFim = false
+        })
+    },
     abrirEdicao (postId) {
       const post = this.posts.filter((post) => {
         return post.id === postId
       })
       if (post.length > 0) {
-        this.postEdit = post[0]
+        this.postEdit = { ...post[0] }
         this.show_add_img_edit = false
         if (this.postEdit.url_foto) {
           this.show_add_img_edit = true
@@ -270,16 +337,84 @@ export default {
       this.show_edit_post = false
       this.postEdit = {}
     },
-    editarPost (postId) {
-      for (let i = 0; i < this.posts.length; i++) {
-        if (this.posts[i].id === postId) {
-          this.posts[i] = this.postEdit
-          break
-        }
+    editarPost () {
+      const postId = this.postEdit.id
+      const post = {
+        conteudo: this.postEdit.conteudo,
+        url_foto: ''
       }
-    },
-    apagarPost (postId) {
+      if (this.show_add_img_edit) {
+        post.url_foto = this.postEdit.url_foto
+      }
 
+      const temp = { ...this.postEdit }
+      this.fecharEdicao()
+
+      const dismiss = this.$q.notify({
+        message: 'Atualizando...'
+      })
+
+      PostService.atualizar(postId, post)
+        .then((res) => {
+          dismiss()
+          this.$q.notify({
+            message: 'Atualizado!',
+            color: 'primary'
+          })
+          for (let i = 0; i < this.posts.length; i++) {
+            if (this.posts[i].id === postId) {
+              this.posts[i].conteudo = temp.conteudo
+              this.posts[i].url_foto = temp.url_foto
+              break
+            }
+          }
+        })
+        .catch(() => {
+          dismiss()
+          this.$q.notify({
+            message: 'Ops! Houve algum erro',
+            color: 'negative'
+          })
+        })
+    },
+    abrirRemocao (idPost) {
+      this.show_delete_post = true
+      this.postDelete = idPost
+    },
+    fecharRemocao () {
+      this.show_delete_post = false
+      this.postDelete = null
+    },
+    apagarPost () {
+      const idPost = this.postDelete
+
+      this.fecharRemocao()
+
+      const dismiss = this.$q.notify({
+        message: 'Apagando...'
+      })
+
+      PostService.apagar(idPost)
+        .then((res) => {
+          dismiss()
+          this.$q.notify({
+            message: 'Apagado!',
+            color: 'primary'
+          })
+          for (let i = 0; i < this.posts.length; i++) {
+            if (this.posts[i].id === idPost) {
+              this.posts.splice(i, 1)
+              break
+            }
+          }
+        })
+        .catch(() => {
+          dismiss()
+          this.$q.notify({
+            message: 'Ops! Houve algum erro',
+            color: 'negative'
+          })
+        })
     }
   }
 }
