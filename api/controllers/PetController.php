@@ -26,7 +26,10 @@ class PetController {
 
     if (isset($filtros['cidade']))
       $q_where .= " AND id_cidade = ".$filtros['cidade'];
-
+    
+    if (isset($filtros['id']))
+      $q_where .= " AND p.id = ".$filtros['id'];
+    
     if (isset($filtros['nao_vinculado'])) {
       $q_where .= "
        AND pl.id_pet IS NULL";

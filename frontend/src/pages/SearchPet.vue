@@ -19,7 +19,7 @@
         v-for="pet in petList"
         :key="pet.id"
         :name="pet.id">
-        <a @click="$router.push('/pet');" >
+        <a @click="$router.push(`/pet?id=${pet.id}`);" >
           <figure class="relative-position">
             <q-icon v-if="pet.loading" 
               class="marked-pet" name="sync" />

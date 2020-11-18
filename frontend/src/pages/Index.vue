@@ -36,7 +36,7 @@
         v-for="post in posts"
         :key="post.id"
         class="flex post q-py-md">
-        <a @click="$router.push('/pet');" 
+        <a @click="redirectProfile(post.id_pet)" 
           class="flex flex-center q-px-lg heading">
           <img alt="Foto do Pet"
             class="profile-picture"
@@ -415,6 +415,10 @@ export default {
             color: 'negative'
           })
         })
+    },
+    redirectProfile(pet_id){
+      if(pet_id)
+      this.$router.push(`/pet?id=${pet_id}`);
     }
   }
 }
