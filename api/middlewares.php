@@ -94,5 +94,12 @@
   $app->add($session_middleware);
   $app->add($db_middleware);
   $app->add($cors_middleware);
+  $app->add(function ($req, $res, $next) {
+    $response = $next($req, $res);
+    return $response
+            ->withHeader('Access-Control-Allow-Origin', '*')
+            ->withHeader('Access-Control-Allow-Headers', '*');
+      
+});
 
 ?>
