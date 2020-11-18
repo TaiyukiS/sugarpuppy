@@ -9,14 +9,13 @@
       <img
         alt="Foto do Perfil"
         class="profile-picture"
-        src="~assets/ehmole.jpg"
+        :src="pet.url_foto"
       />
     </div>
     <div class="q-px-lg q-mb-lg">
-      <h4 class="text-center">Nome do Pet</h4>
+      <h4 class="text-center">{{pet.nome}}</h4>
       <article>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum
-        dolor sit amet, consectetur adipiscing elit.
+          {{pet.descricao}}
       </article>
       <div class="q-my-lg text-center">
         <q-btn class="q-mt-sm button-main" rounded color="primary" label="ADOTAR" />
@@ -197,6 +196,7 @@
 <script>
 import { date } from 'quasar'
 import { PostService } from "../services/posts";
+import { PetService } from "../services/pets"
 import LocalStorage from '../services/LocalStorage'
 const dadosUsuario = LocalStorage.get('login')
 
@@ -204,6 +204,7 @@ export default {
   name: "PetProfile",
   data() {
     return {
+      pet: null,
       post_text: '',
       post_img: '',
       show_add_img: false,
@@ -224,6 +225,7 @@ export default {
   async created() {
     const posts = await PostService.get({ pet: this.$route.query.id });
     this.posts = posts;
+    await this.buscarPet();
   },
   methods: {
     formatDate (dateStr) {
@@ -273,6 +275,10 @@ export default {
         .finally(() => {
           this.msgSearching = false;
         });
+    },
+    async buscarPet(){
+      this.pet = await PetService.get({id: this.$route.query.id})
+      this.pet = this.pet[0]
     },
     buscarMaisPosts() {
       this.msgSearchingFim = true;
