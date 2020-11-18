@@ -6,6 +6,8 @@ use \SugarPuppy\SPException;
 
 class PostController {
   public static function buscar($filtros) {
+    $id_usuario = Env::Get('id_usuario');
+
     $q_join = "";
     $q_where = "";
     $q_offset = "0";
@@ -40,6 +42,7 @@ class PostController {
     LEFT JOIN pet pp ON pp.id = p.id_pet
       AND pp.ativo = 'S'
     LEFT JOIN post_reacao pr ON pr.id_post = p.id
+      AND pr.id_usuario = {$id_usuario}
     WHERE p.ativo = 'S'
       AND u.ativo = 'S'
       {$q_where}
