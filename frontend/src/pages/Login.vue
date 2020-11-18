@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import loginService from '../services/login'
+import { LoginService } from '../services/login'
 export default {
   name: 'Login',
   data () {
@@ -28,7 +28,7 @@ export default {
   },
   methods: {
     async doLogin (){
-      await loginService.login (this.login, this.senha)
+      await LoginService.login (this.login, this.senha)
       this.$router.push('/timeline');
     }
   }
