@@ -1,5 +1,7 @@
 import { axiosInstance as axios } from 'src/boot/axios'
 
+import LocalStorage from './LocalStorage'
+
 function get (filtros) {
   return axios
     .get('/pets', { params: filtros })
@@ -24,9 +26,20 @@ function getCaracteristicas () {
     .catch((error) => Promise.reject(error))
 }
 
+function getMeus () {
+  return axios
+    .get('/pets/meus')
+    .then((pets) => {
+      LocalStorage.set('pets', pets)
+      return pets
+    })
+    .catch((error) => Promise.reject(error))
+}
+
 export const PetService = {
   get,
   like,
   dislike,
-  getCaracteristicas
+  getCaracteristicas,
+  getMeus
 }

@@ -51,6 +51,24 @@
       echo json_encode($response_obj, JSON_NUMERIC_CHECK);
     });
 
+    $this->get('/meus', function ($request) {
+      $response_obj = [];
+      
+      try {
+        $pets = PetController::buscarMeus();
+        $response_obj['status'] = 200;
+        $response_obj['msg'] = 'ok';
+        $response_obj['dados'] = $pets;
+
+      } catch (Exception $e) {
+        $response_obj = SPException::catch($e, [
+          'erro_query' => [500, 'erro_busca']
+        ]);
+      }
+
+      echo json_encode($response_obj, JSON_NUMERIC_CHECK);
+    });
+
     $this->post('/{id_pet}/like', function ($request, $response, $args) {
       
       $response_obj = [];

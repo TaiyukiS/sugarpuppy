@@ -1,8 +1,10 @@
 <template>
   <q-item
+    v-if="visible"
     clickable
     tag="a"
-    :href="'#'+link"
+    :href="link"
+    @click="handleClick(click)"
   >
     <q-item-section
       v-if="icon"
@@ -32,13 +34,27 @@ export default {
     },
 
     link: {
-      type: String,
-      default: '#'
+      default: false
+    },
+
+    click: {
+      default: false
     },
 
     icon: {
       type: String,
       default: ''
+    },
+
+    visible: {
+      type: Boolean,
+      default: true
+    }
+
+  },
+  methods: {
+    handleClick (event) {
+      this.$root.$emit(event, true)
     }
   }
 }

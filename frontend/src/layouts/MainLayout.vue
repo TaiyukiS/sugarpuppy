@@ -13,7 +13,7 @@
         <q-toolbar-title>
           Suggar Puppy
         </q-toolbar-title>
-        <div>Usuário X</div>
+        <div>{{login.nome}}</div>
       </q-toolbar>
     </q-header>
 
@@ -23,6 +23,15 @@
       bordered
     >
       <q-list>
+        <q-item v-ripple>
+          <q-item-section avatar>
+            <q-avatar>
+              <img :src="login.url">
+            </q-avatar>
+          </q-item-section>
+          <q-item-section>{{login.nome}}</q-item-section>
+        </q-item>
+        <q-separator />
         <EssentialLink
           v-for="link in essentialLinks"
           :key="link.title"
@@ -34,27 +43,85 @@
     <q-page-container>
       <router-view />
     </q-page-container>
+
+    <q-dialog
+      :value="show_pet_dialog"
+      @input="fecharPetDialog()"
+    >
+      <q-card style="width: 480px; max-width: 80vw;">
+        <q-card-section>
+          <q-select
+            label="Usar app como Pet"
+            v-bind:value="petSelecionadoExibicao"
+            v-on:input="atualizarPetSelect($event)"
+            :options="listaPets">
+            <template v-slot:option="scope">
+              <q-item
+                v-bind="scope.itemProps"
+                v-on="scope.itemEvents">
+                <q-item-section>
+                  <q-item-label>
+                    {{scope.opt.nome}}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-select>
+        </q-card-section>
+        <q-card-actions class="flex justify-evenly">
+          <q-btn
+            unelevated
+            @click="fecharPetDialog"
+            label="Cancelar"
+          />
+          <q-btn
+            unelevated
+            color="primary"
+            @click="usarPet"
+            label="Usar Selecionado"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-layout>
 </template>
 
 <script>
+import LocalStorage from '../services/LocalStorage'
+import { LoginService } from '../services/login'
 import EssentialLink from 'components/EssentialLink.vue'
 
-const linksData = [
+let ispet = Boolean(LocalStorage.get('ispet'))
+
+const constructMenu = (ispet) => [
   {
     title: 'Início',
     icon: 'home',
-    link: '/timeline'
+    link: '#/timeline',
+    visible: true
   },
   {
     title: 'Pesquisar',
     icon: 'search',
-    link: '/search'
+    link: '#/search',
+    visible: true
+  },
+  {
+    title: 'Usar como Pet',
+    icon: 'swap_vert',
+    click: 'changeToPet',
+    visible: !ispet
+  },
+  {
+    title: 'Usar como Usuário',
+    icon: 'swap_vert',
+    click: 'changeToUser',
+    visible: ispet
   },
   {
     title: 'Sair',
     icon: 'power_settings_new',
-    link: '/logout'
+    link: '#/logout'
   }
 ]
 
@@ -64,8 +131,60 @@ export default {
   data () {
     return {
       leftDrawerOpen: false,
-      essentialLinks: linksData
+      essentialLinks: constructMenu(ispet),
+      login: LocalStorage.get('login'),
+      show_pet_dialog: false,
+      listaPets: LocalStorage.get('pets'),
+      petSelecionado: null,
+      petSelecionadoExibicao: null
+    }
+  },
+  created () {
+    this.$root.$on('changeToPet', this.changeToPet)
+    this.$root.$on('changeToUser', this.changeToUser)
+  },
+  methods: {
+    fecharPetDialog () {
+      this.show_pet_dialog = false
+    },
+    changeToPet () {
+      this.leftDrawerOpen = false
+      if (this.listaPets.length > 0) {
+        this.show_pet_dialog = true
+      } else {
+        this.$q.notify({
+          message: 'Você não tem nenhum pet',
+          color: 'info'
+        })
+      }
+    },
+    atualizarPetSelect (value) {
+      this.petSelecionado = value
+      this.petSelecionadoExibicao = value.nome
+    },
+    usarPet () {
+      this.leftDrawerOpen = false
+      ispet = true
+      LoginService.iamPet(this.petSelecionado)
+      this.essentialLinks = constructMenu(ispet)
+      this.login = LocalStorage.get('login')
+    },
+    changeToUser () {
+      ispet = false
+      this.petSelecionado = null
+      this.petSelecionadoExibicao = null
+      LoginService.iamUSer()
+      this.essentialLinks = constructMenu(ispet)
+      this.login = LocalStorage.get('login')
     }
   }
 }
 </script>
+<style type="text/css" scoped>
+  h4 {
+    margin: 0;
+    color: #528124;
+    font-size: 25px;
+    text-align: center;
+  }
+</style>

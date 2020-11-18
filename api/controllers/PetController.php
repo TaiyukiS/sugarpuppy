@@ -93,6 +93,25 @@ class PetController {
       'racas' => $racas
     ];
   }
+  public static function buscarMeus() {
+    $id_usuario = Env::Get('id_usuario');
+
+    $query = "
+    SELECT p.id, p.nome, p.url_foto
+    FROM pet p
+    WHERE p.ativo = 'S'
+      AND p.id_usuario = {$id_usuario}";
+
+    DB::getConnection();
+
+    $pets = DB::fetchAll($query);
+
+    if (is_null($pets)) {
+      throw new SPException(500, "erro_query");
+    }
+
+    return $pets;
+  }
   public static function like($dados) {
 
     if (!isset($dados['id_pet']) || empty($dados['id_pet'])) {

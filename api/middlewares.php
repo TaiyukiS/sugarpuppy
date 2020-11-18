@@ -34,7 +34,8 @@
     $headers_api = [
       'api-key',
       'access-key',
-      'id-usuario'
+      'id-usuario',
+      'id-pet'
     ];
 
     foreach ($headers_api as $header) {
@@ -76,7 +77,10 @@
 
 
     try {
-      LoginController::carregarLogin(Env::Get('id_usuario'));
+      LoginController::carregarLogin(
+        Env::Get('id_usuario'),
+        Env::Get('id_pet')
+      );
     } catch (Exception $e) {
       // Não autorizado: login não é mais válido
       return $response->withStatus(403)->write('Forbidden: Login is not valid');

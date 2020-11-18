@@ -20,7 +20,7 @@ class LoginController {
     $senha = $dados['senha'];
 
     $query = "
-    SELECT id FROM usuario
+    SELECT id, nome, url_foto FROM usuario
     WHERE email = '{$email}'
       AND senha = '{$senha}'
       AND ativo = 'S'
@@ -38,7 +38,9 @@ class LoginController {
 
     $response = [
       'access_key' => static::criarChaveAcesso($row['id_usuario']),
-      'id_usuario' => $row['id_usuario']
+      'id_usuario' => $row['id_usuario'],
+      'nome' => $row['nome'],
+      'url' => $row['url_foto']
     ];
 
     return $response;
