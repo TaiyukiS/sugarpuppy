@@ -1,21 +1,22 @@
-import { axiosInstance as axios, updateAxiosHeaders } from 'src/boot/axios';
+import { axiosInstance as axios, updateAxiosHeaders } from 'src/boot/axios'
 
-import LocalStorage from './LocalStorage';
+import LocalStorage from './LocalStorage'
 
-function login(email, senha) {
-  return axios
-    .post('/login', {
-      id_empresa: email,
-      id_usuario: senha
-    })
-    .then((dadosUsuario) => {
-      LocalStorage.set('login', dadosUsuario);
+async function login (email, senha) {
+  console.log(email,senha)
+  try {
+    const dadosUsuario = await axios
+      .post('/login', {
+        email,
+        senha
+      })
+    LocalStorage.set('login', dadosUsuario)
 
-      updateAxiosHeaders(dadosUsuario);
-
-      return dadosUsuario;
-    })
-    .catch((error) => Promise.reject(error));
+    updateAxiosHeaders(dadosUsuario)
+    return dadosUsuario
+  } catch (error) {
+    return await Promise.reject(error)
+  }
 }
 
 export default {

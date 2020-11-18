@@ -11,18 +11,25 @@
         rounded outlined v-model="senha" label="Senha" />
       <q-btn class="q-mt-sm"
         rounded color="primary" label="Entrar" 
-        @click="$router.push('/timeline');" />
+        @click="doLogin" />
     </form>
   </div>
 </template>
 
 <script>
+import loginService from '../services/login'
 export default {
   name: 'Login',
   data () {
     return {
       login: null,
       senha: null
+    }
+  },
+  methods: {
+    async doLogin (){
+      await loginService.login (this.login, this.senha)
+      this.$router.push('/timeline');
     }
   }
 }
