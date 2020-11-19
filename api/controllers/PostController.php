@@ -60,11 +60,6 @@ class PostController {
     return $posts;
   }
   public static function publicar($dados) {
-    $id_pet = 'NULL';
-    if (!empty($dados['id_pet'])) {
-      $id_pet = $dados['id_pet'];
-    }
-
     $conteudo = 'NULL';
     if (!empty($dados['conteudo'])) {
       $conteudo = "'".addslashes($dados['conteudo'])."'";
@@ -80,6 +75,11 @@ class PostController {
     }
 
     $id_usuario = Env::Get('id_usuario');
+
+    $id_pet = 'NULL';
+    if (Env::Get('id_pet')) {
+      $id_pet = Env::Get('id_pet');
+    }
 
     $query = "
     INSERT INTO post (

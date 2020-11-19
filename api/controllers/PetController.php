@@ -37,7 +37,7 @@ class PetController {
 
     $query = "
     SELECT 
-      p.id, p.nome, p.descricao, p.url_foto,
+      p.id, p.nome, p.descricao, p.url_foto, p.url_capa,
       pl.like
     {$q_select}
     FROM pet p

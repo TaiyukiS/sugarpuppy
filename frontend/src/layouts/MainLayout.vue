@@ -104,7 +104,7 @@ const constructMenu = (ispet) => [
     title: 'Pesquisar',
     icon: 'search',
     link: '#/search',
-    visible: true
+    visible: !ispet
   },
   {
     title: 'Usar como Pet',
@@ -139,6 +139,11 @@ export default {
       petSelecionadoExibicao: null
     }
   },
+  beforeCreate () {
+    if (!LocalStorage.get('login')) {
+      this.$router.push('/')
+    }
+  },
   created () {
     this.$root.$on('changeToPet', this.changeToPet)
     this.$root.$on('changeToUser', this.changeToUser)
@@ -168,6 +173,7 @@ export default {
       LoginService.iamPet(this.petSelecionado)
       this.essentialLinks = constructMenu(ispet)
       this.login = LocalStorage.get('login')
+      this.$router.go()
     },
     changeToUser () {
       ispet = false
@@ -176,6 +182,7 @@ export default {
       LoginService.iamUSer()
       this.essentialLinks = constructMenu(ispet)
       this.login = LocalStorage.get('login')
+      this.$router.go()
     }
   }
 }

@@ -416,9 +416,10 @@ export default {
           })
         })
     },
-    redirectProfile(pet_id){
-      if(pet_id)
-      this.$router.push(`/pet?id=${pet_id}`);
+    redirectProfile (petId) {
+      if (petId) {
+        this.$router.push(`/pet?id=${petId}`)
+      }
     }
   }
 }

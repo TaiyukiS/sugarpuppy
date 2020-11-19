@@ -3,7 +3,7 @@
     <div
       class="flex items-center justify-center cover"
       v-bind:style="{
-        backgroundImage: 'url(https://picsum.photos/200/300)'
+        backgroundImage: 'url('+pet.url_capa+')'
       }"
     >
       <img
@@ -18,19 +18,8 @@
           {{pet.descricao}}
       </article>
       <div class="q-my-lg text-center">
+        <q-btn class="q-mt-sm button-main" rounded color="primary" label="Seguir" />
         <q-btn class="q-mt-sm button-main" rounded color="primary" label="ADOTAR" />
-      </div>
-      <div class="gallery">
-        <img
-          alt="Foto do Pet"
-          src="~assets/ehmole.jpg"
-          v-on:dblclick="console.log('deu like')"
-        />
-        <img alt="Foto do Pet" src="~assets/cachorro2.jpg" />
-        <img alt="Foto do Pet" src="~assets/ehmole.jpg" />
-        <img alt="Foto do Pet" src="~assets/cachorro2.jpg" />
-        <img alt="Foto do Pet" src="~assets/ehmole.jpg" />
-        <img alt="Foto do Pet" src="~assets/cachorro2.jpg" />
       </div>
     </div>
     <q-pull-to-refresh @refresh="buscarPosts">
@@ -195,16 +184,16 @@
 
 <script>
 import { date } from 'quasar'
-import { PostService } from "../services/posts";
-import { PetService } from "../services/pets"
+import { PostService } from '../services/posts'
+import { PetService } from '../services/pets'
 import LocalStorage from '../services/LocalStorage'
 const dadosUsuario = LocalStorage.get('login')
 
 export default {
-  name: "PetProfile",
-  data() {
+  name: 'PetProfile',
+  data () {
     return {
-      pet: null,
+      pet: {},
       post_text: '',
       post_img: '',
       show_add_img: false,
@@ -220,12 +209,12 @@ export default {
       posts: [],
       postEdit: {},
       postDelete: null
-    };
+    }
   },
-  async created() {
-    const posts = await PostService.get({ pet: this.$route.query.id });
-    this.posts = posts;
-    await this.buscarPet();
+  async created () {
+    const posts = await PostService.get({ pet: this.$route.query.id })
+    this.posts = posts
+    await this.buscarPet()
   },
   methods: {
     formatDate (dateStr) {
@@ -260,43 +249,43 @@ export default {
         dadosUsuario.id_pet === post.id_pet
       )
     },
-    buscarPosts(done) {
-      this.msgSearching = true;
+    buscarPosts (done) {
+      this.msgSearching = true
       PostService.get({ pet: this.$route.query.id })
         .then(newPosts => {
-          this.indexPagina = 1;
-          this.msgFim = false;
-          this.show_more_btn = true;
-          this.posts = newPosts;
+          this.indexPagina = 1
+          this.msgFim = false
+          this.show_more_btn = true
+          this.posts = newPosts
           if (done) {
-            done();
+            done()
           }
         })
         .finally(() => {
-          this.msgSearching = false;
-        });
+          this.msgSearching = false
+        })
     },
-    async buscarPet(){
-      this.pet = await PetService.get({id: this.$route.query.id})
+    async buscarPet () {
+      this.pet = await PetService.get({ id: this.$route.query.id })
       this.pet = this.pet[0]
     },
-    buscarMaisPosts() {
-      this.msgSearchingFim = true;
-      this.show_more_btn = false;
-      this.indexPagina++;
+    buscarMaisPosts () {
+      this.msgSearchingFim = true
+      this.show_more_btn = false
+      this.indexPagina++
       PostService.get({ pagina: this.indexPagina, pet: this.$route.query.id })
         .then(newPosts => {
           if (newPosts.length === 0) {
-            this.msgFim = true;
-            this.show_more_btn = false;
+            this.msgFim = true
+            this.show_more_btn = false
           } else {
-            this.show_more_btn = true;
-            this.posts.push(...newPosts);
+            this.show_more_btn = true
+            this.posts.push(...newPosts)
           }
         })
         .finally(() => {
-          this.msgSearchingFim = false;
-        });
+          this.msgSearchingFim = false
+        })
     },
     abrirEdicao (postId) {
       const post = this.posts.filter((post) => {
@@ -396,7 +385,7 @@ export default {
         })
     }
   }
-};
+}
 </script>
 <style type="text/css" scoped>
 @keyframes bump {
@@ -433,6 +422,9 @@ article {
   margin: 0;
   font-size: 20px;
   font-weight: bold;
+}
+.button-main + .button-main {
+  margin-left: 30px;
 }
 .gallery {
   display: flex;

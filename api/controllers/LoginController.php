@@ -17,7 +17,7 @@ class LoginController {
 
   public static function loginUsuario($dados) {
     $email = $dados['email'];
-    $senha = $dados['senha'];
+    $senha = md5($dados['senha']);
 
     $query = "
     SELECT id, nome, url_foto FROM usuario
@@ -37,8 +37,8 @@ class LoginController {
     $row = $result->fetch_assoc();
 
     $response = [
-      'access_key' => static::criarChaveAcesso($row['id_usuario']),
-      'id_usuario' => $row['id_usuario'],
+      'access_key' => static::criarChaveAcesso($row['id']),
+      'id_usuario' => $row['id'],
       'nome' => $row['nome'],
       'url' => $row['url_foto']
     ];

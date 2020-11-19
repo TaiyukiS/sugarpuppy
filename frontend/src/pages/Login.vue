@@ -1,9 +1,6 @@
 <template>
   <div id="login" class="flex justify-center items-center">
-    <img alt="Foto do Perfil"
-      class="profile-picture"
-      src="~assets/ehmole.jpg">
-    <h4>Bem-vinda Cláudia</h4>
+    <h4>Bem-vindo ao Suggar Puppy</h4>
     <form>
       <q-input
         rounded outlined v-model="login" label="Login" />
@@ -27,16 +24,16 @@ export default {
     }
   },
   methods: {
-    async doLogin (){
-      await LoginService.login (this.login, this.senha)
-      this.$router.push('/timeline');
+    async doLogin () {
+      await LoginService.login(this.login, this.senha)
+      this.$router.push('/timeline')
     }
   }
 }
 </script>
 <style type="text/css" scoped>
   #login {
-    padding: 40px 20px;
+    padding: 90px 20px;
   }
   .q-page-container > div {
     flex-direction: column;

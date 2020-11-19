@@ -9,13 +9,12 @@
 </template>
 
 <script>
+import { LoginService } from '../services/login'
 export default {
   name: 'Logout',
   mounted () {
-    const that = this
-    setTimeout(() => {
-      that.$router.push('/')
-    }, 2000)
+    LoginService.logoff()
+    this.$router.push('/')
   }
 }
 </script>

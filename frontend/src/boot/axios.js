@@ -22,7 +22,7 @@ const updateAxiosHeaders = (headers) => {
   axiosInstance.interceptors.request.use((config) => {
     config.headers['access-key'] = headers.access_key
     config.headers['id-usuario'] = headers.id_usuario
-    if (config.headers['id-pet']) {
+    if (headers.id_pet) {
       config.headers['id-pet'] = headers.id_pet
     } else {
       delete config.headers['id-pet']
