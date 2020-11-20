@@ -162,6 +162,7 @@
 </template>
 
 <script>
+import LocalStorage from '../services/LocalStorage'
 import { PetService } from '../services/pets'
 
 const markSync = (slide) => (pet) => {
@@ -212,6 +213,12 @@ export default {
       listaCidade: [],
       filtroCidade: null,
       filtroCidadeExibicao: null
+    }
+  },
+  beforeCreate () {
+    console.log(LocalStorage.get('ispet'))
+    if (LocalStorage.get('ispet')) {
+      this.$router.push('/timeline')
     }
   },
   mounted () {

@@ -111,6 +111,90 @@
       echo json_encode($response_obj, JSON_NUMERIC_CHECK);
     });
 
+    $this->post('/{id_pet}/follow', function ($request, $response, $args) {
+      
+      $response_obj = [];
+      $body = $request->getParsedBody();
+      $body['id_pet'] = $args['id_pet'];
+      
+      try {
+        PetController::seguir($body);
+        $response_obj['status'] = 200;
+        $response_obj['msg'] = 'ok';
+
+      } catch (Exception $e) {
+        $response_obj = SPException::catch($e, [
+          'sem_pet' => [500, 'id_pet_vazio'],
+          'erro_query' => [500, 'erro_follow']
+        ]);
+      }
+
+      echo json_encode($response_obj, JSON_NUMERIC_CHECK);
+    });
+
+    $this->post('/{id_pet}/unfollow', function ($request, $response, $args) {
+      
+      $response_obj = [];
+      $body = $request->getParsedBody();
+      $body['id_pet'] = $args['id_pet'];
+      
+      try {
+        PetController::deixarDeSeguir($body);
+        $response_obj['status'] = 200;
+        $response_obj['msg'] = 'ok';
+
+      } catch (Exception $e) {
+        $response_obj = SPException::catch($e, [
+          'sem_pet' => [500, 'id_pet_vazio'],
+          'erro_query' => [500, 'erro_unfollow']
+        ]);
+      }
+
+      echo json_encode($response_obj, JSON_NUMERIC_CHECK);
+    });
+
+    $this->post('/{id_pet}/adotar', function ($request, $response, $args) {
+      
+      $response_obj = [];
+      $body = $request->getParsedBody();
+      $body['id_pet'] = $args['id_pet'];
+      
+      try {
+        PetController::adotar($body);
+        $response_obj['status'] = 200;
+        $response_obj['msg'] = 'ok';
+
+      } catch (Exception $e) {
+        $response_obj = SPException::catch($e, [
+          'sem_pet' => [500, 'id_pet_vazio'],
+          'erro_query' => [500, 'erro_adocao']
+        ]);
+      }
+
+      echo json_encode($response_obj, JSON_NUMERIC_CHECK);
+    });
+
+    $this->post('/{id_pet}/desadotar', function ($request, $response, $args) {
+      
+      $response_obj = [];
+      $body = $request->getParsedBody();
+      $body['id_pet'] = $args['id_pet'];
+      
+      try {
+        PetController::deixarDeAdotar($body);
+        $response_obj['status'] = 200;
+        $response_obj['msg'] = 'ok';
+
+      } catch (Exception $e) {
+        $response_obj = SPException::catch($e, [
+          'sem_pet' => [500, 'id_pet_vazio'],
+          'erro_query' => [500, 'erro_desadocao']
+        ]);
+      }
+
+      echo json_encode($response_obj, JSON_NUMERIC_CHECK);
+    });
+
   });
 
 ?>

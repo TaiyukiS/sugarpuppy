@@ -1,32 +1,66 @@
 <template>
   <div id="login" class="flex justify-center items-center">
     <h4>Bem-vindo ao Suggar Puppy</h4>
-    <form>
+    <q-form @submit="doLogin">
       <q-input
-        rounded outlined v-model="login" label="Login" />
+        rounded outlined v-model="login" label="Login" 
+        @keydown.enter="doLogin" />
       <q-input class="q-my-sm" type="password"
-        rounded outlined v-model="senha" label="Senha" />
+        rounded outlined v-model="senha" label="Senha"
+        @keydown.enter="doLogin" />
       <q-btn class="q-mt-sm"
         rounded color="primary" label="Entrar" 
         @click="doLogin" />
-    </form>
+    </q-form>
   </div>
 </template>
 
 <script>
+import LocalStorage from '../services/LocalStorage'
 import { LoginService } from '../services/login'
+import { PetService } from '../services/pets'
+
 export default {
   name: 'Login',
   data () {
     return {
-      login: null,
-      senha: null
+      login: '',
+      senha: ''
+    }
+  },
+  beforeCreate () {
+    if (LocalStorage.get('login')) {
+      this.$router.push('/timeline')
     }
   },
   methods: {
     async doLogin () {
-      await LoginService.login(this.login, this.senha)
-      this.$router.push('/timeline')
+      if (this.login.length === 0 || this.senha.length === 0) {
+        this.$q.notify({
+          message: 'Preencha os campos Login e Senha!',
+          color: 'negative'
+        })
+        return
+      }
+      const dismiss = this.$q.notify({
+        message: 'Processando...'
+      })
+      try {
+        await LoginService.login(this.login, this.senha)
+        await PetService.getMeus()
+        dismiss()
+        this.$q.notify({
+          message: 'Sucesso!',
+          color: 'primary'
+        })
+        this.$router.push('/timeline')
+      } catch (e) {
+        dismiss()
+        this.$q.notify({
+          message: 'Ops! não foi possível fazer o login',
+          color: 'negative'
+        })
+      }
     }
   }
 }

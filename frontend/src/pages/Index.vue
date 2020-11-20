@@ -254,6 +254,16 @@ export default {
         post.url_foto = this.post_img
       }
 
+      if (post.conteudo.length === 0 && 
+        (!post.url_foto || post.url_foto.length === 0)
+      ) {
+        this.$q.notify({
+          message: 'O post deve conter um texto ou uma foto!',
+          color: 'negative'
+        })
+        return
+      }
+
       this.msgPublishing = true
 
       PostService.publicar(post)
@@ -345,6 +355,14 @@ export default {
       }
       if (this.show_add_img_edit) {
         post.url_foto = this.postEdit.url_foto
+      }
+
+      if (post.conteudo.length === 0 && post.url_foto.length === 0) {
+        this.$q.notify({
+          message: 'O post deve conter um texto ou uma foto!',
+          color: 'negative'
+        })
+        return
       }
 
       const temp = { ...this.postEdit }

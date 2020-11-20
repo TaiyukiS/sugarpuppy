@@ -38,11 +38,23 @@ class PetController {
     $query = "
     SELECT 
       p.id, p.nome, p.descricao, p.url_foto, p.url_capa,
-      pl.like
+      pl.like,
+      (CASE
+        WHEN ps.id_usuario IS NOT NULL THEN 1
+        ELSE NULL
+      END) as seguindo,
+      (CASE
+        WHEN pa.id_usuario IS NOT NULL THEN 1
+        ELSE NULL
+      END) as adotado
     {$q_select}
     FROM pet p
     LEFT JOIN pet_like pl ON pl.id_pet = p.id
       AND pl.id_usuario = {$id_usuario}
+    LEFT JOIN pet_seguidor ps ON ps.id_pet = p.id
+      AND ps.id_usuario = {$id_usuario}
+    LEFT JOIN pet_adocao pa ON pa.id_pet = p.id
+      AND pa.id_usuario = {$id_usuario}
     {$q_join}
     WHERE p.ativo = 'S'
       {$q_where}
@@ -171,6 +183,102 @@ class PetController {
     DB::getConnection();
 
     DB::execute($query_del);
+    $rs = DB::execute($query);
+
+    if (!$rs) {
+      throw new SPException(500, "erro_query");
+    }
+
+    return true;
+  }
+  public static function seguir($dados) {
+    if (!isset($dados['id_pet']) || empty($dados['id_pet'])) {
+      throw new SPException(500, "sem_pet");
+    }
+
+    $id_pet = $dados['id_pet'];
+    $id_usuario = Env::Get('id_usuario');
+
+    $query = "
+    INSERT INTO pet_seguidor (
+      id_usuario, id_pet
+    ) VALUES (
+      {$id_usuario}, {$id_pet}
+    )";
+
+    DB::getConnection();
+
+    $rs = DB::execute($query);
+
+    if (!$rs) {
+      throw new SPException(500, "erro_query");
+    }
+
+    return true;
+  }
+  public static function deixarDeSeguir($dados) {
+    if (!isset($dados['id_pet']) || empty($dados['id_pet'])) {
+      throw new SPException(500, "sem_pet");
+    }
+
+    $id_pet = $dados['id_pet'];
+    $id_usuario = Env::Get('id_usuario');
+
+    $query = "
+    DELETE FROM pet_seguidor
+    WHERE id_usuario = {$id_usuario}
+      AND id_pet = {$id_pet}";
+
+    DB::getConnection();
+
+    $rs = DB::execute($query);
+
+    if (!$rs) {
+      throw new SPException(500, "erro_query");
+    }
+
+    return true;
+  }
+  public static function adotar($dados) {
+    if (!isset($dados['id_pet']) || empty($dados['id_pet'])) {
+      throw new SPException(500, "sem_pet");
+    }
+
+    $id_pet = $dados['id_pet'];
+    $id_usuario = Env::Get('id_usuario');
+
+    $query = "
+    INSERT INTO pet_adocao (
+      id_usuario, id_pet
+    ) VALUES (
+      {$id_usuario}, {$id_pet}
+    )";
+
+    DB::getConnection();
+
+    $rs = DB::execute($query);
+
+    if (!$rs) {
+      throw new SPException(500, "erro_query");
+    }
+
+    return true;
+  }
+  public static function deixarDeAdotar($dados) {
+    if (!isset($dados['id_pet']) || empty($dados['id_pet'])) {
+      throw new SPException(500, "sem_pet");
+    }
+
+    $id_pet = $dados['id_pet'];
+    $id_usuario = Env::Get('id_usuario');
+
+    $query = "
+    DELETE FROM pet_adocao
+    WHERE id_usuario = {$id_usuario}
+      AND id_pet = {$id_pet}";
+
+    DB::getConnection();
+
     $rs = DB::execute($query);
 
     if (!$rs) {

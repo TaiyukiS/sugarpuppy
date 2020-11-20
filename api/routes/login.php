@@ -20,6 +20,7 @@
 
       } catch (Exception $e) {
         $response_obj = SPException::catch($e, [
+          'login_vazio' => [500, 'login_vazio'],
           'login_invalido' => [500, 'login_invalido']
         ]);
       }

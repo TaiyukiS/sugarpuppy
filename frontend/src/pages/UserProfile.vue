@@ -14,7 +14,7 @@
     </div>
     <div class="q-px-lg q-mb-lg">
       <h4 class="text-center">{{user.nome}}</h4>
-      <article>
+      <article class="text-center">
           {{user.descricao}}
       </article>
       <div class="q-my-lg text-center">
@@ -210,10 +210,9 @@ export default {
       postDelete: null
     }
   },
-  async created () {
-    const posts = await PostService.get({ id_usuario: this.$route.query.id })
-    this.posts = posts
-    await this.buscarUsuario()
+  created () {
+    this.buscarUsuario()
+    this.buscarPosts()
   },
   methods: {
     formatDate (dateStr) {
@@ -393,6 +392,10 @@ export default {
 }
 .q-page-container > div {
   flex-direction: column;
+  padding-bottom: 20px;
+}
+.q-page-container > div > div {
+  width: 100%;
 }
 .cover {
   width: 100%;
@@ -412,6 +415,9 @@ h4 {
   margin: 35px 0 20px 0;
   color: #528124;
   font-style: 30px;
+}
+h6 {
+  margin: 20px 0;
 }
 article {
   font-size: 15px;

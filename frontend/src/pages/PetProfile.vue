@@ -14,12 +14,14 @@
     </div>
     <div class="q-px-lg q-mb-lg">
       <h4 class="text-center">{{pet.nome}}</h4>
-      <article>
+      <article class="text-center">
           {{pet.descricao}}
       </article>
       <div class="q-my-lg text-center">
         <q-btn class="q-mt-sm button-main" rounded color="primary" label="Seguir" />
+        <q-btn class="q-mt-sm button-main text-primary" rounded outline label="Seguindo" />
         <q-btn class="q-mt-sm button-main" rounded color="primary" label="ADOTAR" />
+        <q-btn class="q-mt-sm button-main text-primary" rounded outline label="Adotado" />
       </div>
     </div>
     <q-pull-to-refresh @refresh="buscarPosts">
@@ -211,10 +213,9 @@ export default {
       postDelete: null
     }
   },
-  async created () {
-    const posts = await PostService.get({ pet: this.$route.query.id })
-    this.posts = posts
-    await this.buscarPet()
+  created () {
+    this.buscarPet()
+    this.buscarPosts()
   },
   methods: {
     formatDate (dateStr) {
@@ -394,6 +395,10 @@ export default {
 }
 .q-page-container > div {
   flex-direction: column;
+  padding-bottom: 20px;
+}
+.q-page-container > div > div {
+  width: 100%;
 }
 .cover {
   width: 100%;
@@ -413,6 +418,9 @@ h4 {
   margin: 35px 0 20px 0;
   color: #528124;
   font-style: 30px;
+}
+h6 {
+  margin: 20px 0;
 }
 article {
   font-size: 15px;
