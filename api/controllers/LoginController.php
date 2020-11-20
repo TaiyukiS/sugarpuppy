@@ -12,6 +12,8 @@ class LoginController {
     return password_hash(self::$PRE_SALT.$chave.self::$POS_SALT, PASSWORD_DEFAULT);
   }
   public static function validarChaveAcesso($chave, $cifra) {
+    error_log($chave, 0);
+    error_log($cifra, 0);
     return password_verify(self::$PRE_SALT.$chave.self::$POS_SALT, $cifra);
   }
 
@@ -25,16 +27,17 @@ class LoginController {
       AND senha = '{$senha}'
       AND ativo = 'S'
     LIMIT 1";
-
+   
     DB::getConnection();
 
     $result = DB::execute($query);
-
+    error_log($result);
     if ($result->num_rows == 0) {
       throw new SPException(500, "login_invalido");
     }
 
     $row = $result->fetch_assoc();
+    error_log($query, 0);
 
     $response = [
       'access_key' => static::criarChaveAcesso($row['id']),

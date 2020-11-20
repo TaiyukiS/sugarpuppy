@@ -18,6 +18,9 @@ class PostController {
     if (isset($filtros['pet']))
       $q_where .= " AND p.id_pet = ".$filtros['pet'];
 
+    if (isset($filtros['id_usuario']))
+      $q_where .= " AND p.id_usuario = ".$filtros['id_usuario'].= " AND p.id_pet is null ";
+
     if (isset($filtros['pagina']))
       $q_offset = 50*($filtros['pagina']-1);
 
