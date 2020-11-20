@@ -36,7 +36,7 @@
         v-for="post in posts"
         :key="post.id"
         class="flex post q-py-md">
-        <a @click="redirectProfile(post.id_pet)" 
+        <a @click="redirectProfile(post)" 
           class="flex flex-center q-px-lg heading">
           <img alt="Foto do Pet"
             class="profile-picture"
@@ -416,9 +416,11 @@ export default {
           })
         })
     },
-    redirectProfile (petId) {
-      if (petId) {
-        this.$router.push(`/pet?id=${petId}`)
+    redirectProfile (post) {
+      if (post.id_pet) {
+        this.$router.push(`/pet?id=${post.id_pet}`)
+      } else {
+        this.$router.push(`/user?id=${post.id_usuario}`)
       }
     }
   }

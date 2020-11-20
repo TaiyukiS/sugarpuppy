@@ -211,7 +211,7 @@ export default {
     }
   },
   async created () {
-    const posts = await PostService.get({ user: this.$route.query.id })
+    const posts = await PostService.get({ id_usuario: this.$route.query.id })
     this.posts = posts
     await this.buscarUsuario()
   },
