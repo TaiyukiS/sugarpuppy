@@ -20,6 +20,7 @@
   include_once(__DIR__.'/routes/login.php');
   include_once(__DIR__.'/routes/pets.php');
   include_once(__DIR__.'/routes/posts.php');
+  include_once(__DIR__.'/routes/usuarios.php');
 
   $app->run();
 
