@@ -29,6 +29,13 @@ const routes = [
     ]
   },
   {
+    path: '/user',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/UserProfile.vue') }
+    ]
+  },
+  {
     path: '/search',
     component: () => import('layouts/MainLayout.vue'),
     children: [
