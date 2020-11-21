@@ -17,6 +17,78 @@
       <article class="text-center">
           {{pet.descricao}}
       </article>
+      <q-expansion-item
+        expand-separator
+        icon="add"
+        label="Mais informações"
+        @before-show="buscarDetalhes"
+      >
+        <q-card v-if="detalhesPet && !loadingDetalhes">
+          <q-card-section>
+            <q-list>
+                <q-item>
+                  <q-item-section avatar>
+                    <q-icon name="pets" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>{{detalhesPet.animal}}, {{detalhesPet.raca}} </q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item>
+                  <q-item-section avatar>
+                    <q-icon name="color_lens" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label> {{detalhesPet.cor}} </q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item>
+                  <q-item-section avatar>
+                    <q-icon name="cake" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>{{detalhesPet.idade}} anos</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item>
+                  <q-item-section avatar>
+                    <q-icon name="wc" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>{{detalhesPet.sexo === "M" ? "Macho" : "Fêmea"}}</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item>
+                  <q-item-section avatar>
+                    <q-icon name="straighten" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>Largura {{detalhesPet.largura}} cm Comprimento {{detalhesPet.comprimento}} cm</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item>
+                  <q-item-section avatar>
+                    <q-icon name="fiber_manual_record" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>{{detalhesPet.peso}} kg</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item>
+                  <q-item-section avatar>
+                    <q-icon name="room" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>{{detalhesPet.cidade}}, {{detalhesPet.estado}}</q-item-label>
+                  </q-item-section>
+                </q-item>
+            </q-list>
+          </q-card-section>
+        </q-card>
+        <q-inner-loading :showing="loadingDetalhes">
+          <q-spinner-gears size="50px" color="primary" />
+        </q-inner-loading>
+      </q-expansion-item>
       <div class="q-my-lg text-center">
         <q-btn @click="follow" v-if="!pet.seguindo" class="q-mt-sm button-main" rounded color="primary" label="Seguir" />
         <q-btn @click="unfollow" v-else class="q-mt-sm button-main text-primary" rounded outline label="Seguindo" />
@@ -210,7 +282,9 @@ export default {
       indexPagina: 1,
       posts: [],
       postEdit: {},
-      postDelete: null
+      postDelete: null,
+      loadingDetalhes: false,
+      detalhesPet: null
     }
   },
   created () {
@@ -435,6 +509,25 @@ export default {
         })
         .finally(() => {
           this.buscarPet()
+        })
+    },
+    buscarDetalhes () {
+      if (this.detalhesPet) {
+        return
+      }
+      this.loadingDetalhes = true
+      PetService.getDetalhes(this.pet.id)
+        .then((detalhes) => {
+          this.detalhesPet = detalhes
+        })
+        .catch(() => {
+          this.$q.notify({
+            message: 'Ops! Houve algum erro',
+            color: 'negative'
+          })
+        })
+        .finally(() => {
+          this.loadingDetalhes = false
         })
     }
   }
