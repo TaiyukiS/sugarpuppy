@@ -36,10 +36,38 @@ function getMeus () {
     .catch((error) => Promise.reject(error))
 }
 
+function adotar (id) {
+  return axios
+    .post(`/pets/${id}/adotar`)
+    .catch((error) => Promise.reject(error))
+}
+
+function desadotar (id) {
+  return axios
+    .post(`/pets/${id}/desadotar`)
+    .catch((error) => Promise.reject(error))
+}
+
+function follow (id) {
+  return axios
+    .post(`/pets/${id}/follow`)
+    .catch((error) => Promise.reject(error))
+}
+
+function unfollow (id) {
+  return axios
+    .post(`/pets/${id}/unfollow`)
+    .catch((error) => Promise.reject(error))
+}
+
 export const PetService = {
   get,
   like,
   dislike,
   getCaracteristicas,
-  getMeus
+  getMeus,
+  adotar,
+  desadotar,
+  follow,
+  unfollow
 }
