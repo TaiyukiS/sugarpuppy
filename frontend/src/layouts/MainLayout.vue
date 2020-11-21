@@ -105,6 +105,12 @@ const constructMenu = (ispet) => [
     icon: 'search',
     link: '#/search',
     visible: !ispet
+  },  
+  {
+    title: 'Meus Pets',
+    icon: 'pets',
+    link: '#/my-pets',
+    visible: !ispet
   },
   {
     title: 'Usar como Pet',
