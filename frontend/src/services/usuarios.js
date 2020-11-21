@@ -5,6 +5,21 @@ function get (filtros) {
     .get('/usuarios', { params: filtros })
     .catch((error) => Promise.reject(error))
 }
+
+function follow (id) {
+  return axios
+    .post(`/usuarios/${id}/follow`)
+    .catch((error) => Promise.reject(error))
+}
+
+function unfollow (id) {
+  return axios
+    .post(`/usuarios/${id}/unfollow`)
+    .catch((error) => Promise.reject(error))
+}
+
 export const UserService = {
-  get
+  get,
+  follow,
+  unfollow
 }
