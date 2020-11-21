@@ -62,7 +62,7 @@ function unfollow (id) {
 
 function getDetalhes (id) {
   return axios
-    .post(`/pets/${id}/detalhe`)
+    .get(`/pets/${id}/detalhe`)
     .catch((error) => Promise.reject(error))
 }
 
