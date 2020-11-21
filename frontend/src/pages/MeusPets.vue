@@ -25,9 +25,6 @@
 
 <script>
 import { PetService } from '../services/pets'
-// import LocalStorage from '../services/LocalStorage'
-// const dadosUsuario = LocalStorage.get('login')
-
 export default {
   name: 'MeuPets',
   data () {
