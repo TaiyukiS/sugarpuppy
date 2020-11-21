@@ -18,10 +18,10 @@
           {{pet.descricao}}
       </article>
       <div class="q-my-lg text-center">
-        <q-btn class="q-mt-sm button-main" rounded color="primary" label="Seguir" />
-        <q-btn class="q-mt-sm button-main text-primary" rounded outline label="Seguindo" />
-        <q-btn class="q-mt-sm button-main" rounded color="primary" label="ADOTAR" />
-        <q-btn class="q-mt-sm button-main text-primary" rounded outline label="Adotado" />
+        <q-btn v-if="!pet.seguindo" class="q-mt-sm button-main" rounded color="primary" label="Seguir" />
+        <q-btn v-else class="q-mt-sm button-main text-primary" rounded outline label="Seguindo" />
+        <q-btn v-if="pet.adotado" class="q-mt-sm button-main" rounded color="primary" label="ADOTAR" />
+        <q-btn v-else class="q-mt-sm button-main text-primary" rounded outline label="Adotado" />
       </div>
     </div>
     <q-pull-to-refresh @refresh="buscarPosts">
