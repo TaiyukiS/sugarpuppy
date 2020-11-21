@@ -21,6 +21,13 @@ class PostController {
     if (isset($filtros['id_usuario']))
       $q_where .= " AND p.id_usuario = ".$filtros['id_usuario'].= " AND p.id_pet is null ";
 
+    if (isset($filtros['users_follow']))
+      $q_where .= " AND p.id_usuario  in 
+      ( SELECT us.id_usuario_seguido from usuario_seguidor us 
+      where us.id_usuario_seguidor = ".$id_usuario." ) 
+      and p.id_pet is null";
+
+
     if (isset($filtros['pagina']))
       $q_offset = 50*($filtros['pagina']-1);
 
@@ -51,7 +58,6 @@ class PostController {
       {$q_where}
     ORDER BY p.data_cadastro DESC
     LIMIT 50 OFFSET {$q_offset}";
-
     DB::getConnection();
 
     $posts = DB::fetchAll($query);
