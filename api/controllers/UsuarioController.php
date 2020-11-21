@@ -85,10 +85,10 @@ class UsuarioController {
     $id_eu = Env::Get('id_usuario');
 
     $query = "
-    DELETE FROM pet_like
+    DELETE FROM usuario_seguidor
     WHERE id_usuario_seguidor = {$id_eu}
       AND id_usuario_seguido = {$id_usuario}";
-
+    error_log($query);
     DB::getConnection();
 
     $rs = DB::execute($query);
