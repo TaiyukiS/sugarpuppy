@@ -18,7 +18,8 @@
           {{user.descricao}}
       </article>
       <div class="q-my-lg text-center">
-        <q-btn class="q-mt-sm button-main" rounded color="primary" label="Seguir" />
+        <q-btn @click="follow" v-if="!user.seguindo" class="q-mt-sm button-main" rounded color="primary" label="Seguir" />
+        <q-btn @click="unfollow" v-else class="q-mt-sm button-main text-primary" rounded outline label="Seguindo" />
       </div>
     </div>
     <q-pull-to-refresh @refresh="buscarPosts">
@@ -380,6 +381,32 @@ export default {
             message: 'Ops! Houve algum erro',
             color: 'negative'
           })
+        })
+    },
+    follow () {
+      this.user.seguindo = 1
+      UserService.follow(this.user.id)
+        .catch(() => {
+          this.$q.notify({
+            message: 'Ops! Houve algum erro',
+            color: 'negative'
+          })
+        })
+        .finally(() => {
+          this.buscarUsuario()
+        })
+    },
+    unfollow () {
+      this.user.seguindo = null
+      UserService.unfollow(this.user.id)
+        .catch(() => {
+          this.$q.notify({
+            message: 'Ops! Houve algum erro',
+            color: 'negative'
+          })
+        })
+        .finally(() => {
+          this.buscarUsuario()
         })
     }
   }
