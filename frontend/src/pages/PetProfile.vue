@@ -18,10 +18,10 @@
           {{pet.descricao}}
       </article>
       <div class="q-my-lg text-center">
-        <q-btn v-if="!pet.seguindo" class="q-mt-sm button-main" rounded color="primary" label="Seguir" />
-        <q-btn v-else class="q-mt-sm button-main text-primary" rounded outline label="Seguindo" />
-        <q-btn v-if="pet.adotado" class="q-mt-sm button-main" rounded color="primary" label="ADOTAR" />
-        <q-btn v-else class="q-mt-sm button-main text-primary" rounded outline label="Adotado" />
+        <q-btn @click="follow" v-if="!pet.seguindo" class="q-mt-sm button-main" rounded color="primary" label="Seguir" />
+        <q-btn @click="unfollow" v-else class="q-mt-sm button-main text-primary" rounded outline label="Seguindo" />
+        <q-btn @click="adotar" v-if="!pet.adotado" class="q-mt-sm button-main" rounded color="primary" label="ADOTAR" />
+        <q-btn @click="desadotar" v-else class="q-mt-sm button-main text-primary" rounded outline label="Adotado" />
       </div>
     </div>
     <q-pull-to-refresh @refresh="buscarPosts">
@@ -383,6 +383,58 @@ export default {
             message: 'Ops! Houve algum erro',
             color: 'negative'
           })
+        })
+    },
+    adotar () {
+      this.pet.adotado = 1
+      PetService.adotar(this.pet.id)
+        .catch(() => {
+          this.$q.notify({
+            message: 'Ops! Houve algum erro',
+            color: 'negative'
+          })
+        })
+        .finally(() => {
+          this.buscarPet()
+        })
+    },
+    desadotar () {
+      this.pet.adotado = null
+      PetService.desadotar(this.pet.id)
+        .catch(() => {
+          this.$q.notify({
+            message: 'Ops! Houve algum erro',
+            color: 'negative'
+          })
+        })
+        .finally(() => {
+          this.buscarPet()
+        })
+    },
+    follow () {
+      this.pet.seguindo = 1
+      PetService.follow(this.pet.id)
+        .catch(() => {
+          this.$q.notify({
+            message: 'Ops! Houve algum erro',
+            color: 'negative'
+          })
+        })
+        .finally(() => {
+          this.buscarPet()
+        })
+    },
+    unfollow () {
+      this.pet.seguindo = null
+      PetService.unfollow(this.pet.id)
+        .catch(() => {
+          this.$q.notify({
+            message: 'Ops! Houve algum erro',
+            color: 'negative'
+          })
+        })
+        .finally(() => {
+          this.buscarPet()
         })
     }
   }
