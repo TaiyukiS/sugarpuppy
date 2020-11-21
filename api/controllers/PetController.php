@@ -287,6 +287,43 @@ class PetController {
 
     return true;
   }
+
+  public static function buscarDetalhesPet($dados) {
+    if (!isset($dados['id_pet']) || empty($dados['id_pet'])) {
+      throw new SPException(500, "sem_pet");
+    }
+
+    $id_pet = $dados['id_pet'];
+
+    $query = "
+      SELECT
+        p.id, p.idade, p.sexo, p.largura, p.comprimento, p.peso, c.cidade,
+        e.estado, a.animal, r.raca, co.cor
+      from
+        pet p
+        INNER join pet_cidade c on
+          c.id = p.id_cidade
+        INNER join pet_estado e on
+          e.id = p.id_estado
+        INNER join pet_animal a on
+          a.id = p.id_animal
+        INNER join pet_raca r on
+          r.id = p.id_raca
+        INNER join pet_cor co on
+          co.id = p.id_cor
+        where p.id = {$id_pet}";
+
+    DB::getConnection();
+
+    $pets = DB::fetchAll($query);;
+
+    if (is_null($pets)) {
+      throw new SPException(500, "erro_query");
+    }
+
+    return $pets;
+
+  }
 }
 
 ?>

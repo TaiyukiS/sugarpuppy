@@ -195,6 +195,29 @@
       echo json_encode($response_obj, JSON_NUMERIC_CHECK);
     });
 
+    $this->get('/{id_pet}/detalhe', function ($request, $response, $args) {
+      
+      $response_obj = [];
+      $body = $request->getParsedBody();
+      $body['id_pet'] = $args['id_pet'];
+      
+      try {
+        $pets = PetController::buscarDetalhesPet($body);
+
+        $response_obj['status'] = 200;
+        $response_obj['msg'] = 'ok';
+        $response_obj['dados'] = $pets[0];
+
+      } catch (Exception $e) {
+        $response_obj = SPException::catch($e, [
+          'sem_pet' => [500, 'id_pet_vazio'],
+          'erro_query' => [500, 'erro_busca_detalhes']
+        ]);
+      }
+
+      echo json_encode($response_obj, JSON_NUMERIC_CHECK);
+    });
+
   });
 
 ?>
