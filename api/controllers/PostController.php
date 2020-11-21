@@ -27,6 +27,15 @@ class PostController {
       where us.id_usuario_seguidor = ".$id_usuario." ) 
       and p.id_pet is null";
 
+    if (isset($filtros['pets_follow']))
+      $q_where .= " AND p.id_pet  in 
+      ( SELECT ps.id_pet from pet_seguidor ps 
+      where ps.id_usuario = ".$id_usuario." )";
+
+    if (isset($filtros['pets_adotados']))
+      $q_where .= " AND p.id_pet  in 
+      ( SELECT pa.id_pet from pet_adocao pa
+      where pa.id_usuario = ".$id_usuario." )";
 
     if (isset($filtros['pagina']))
       $q_offset = 50*($filtros['pagina']-1);
