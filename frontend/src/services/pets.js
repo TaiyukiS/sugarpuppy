@@ -60,6 +60,12 @@ function unfollow (id) {
     .catch((error) => Promise.reject(error))
 }
 
+function getDetalhes (id) {
+  return axios
+    .post(`/pets/${id}/detalhe`)
+    .catch((error) => Promise.reject(error))
+}
+
 export const PetService = {
   get,
   like,
@@ -69,5 +75,6 @@ export const PetService = {
   adotar,
   desadotar,
   follow,
-  unfollow
+  unfollow,
+  getDetalhes
 }
