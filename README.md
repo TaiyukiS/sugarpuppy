@@ -14,26 +14,20 @@ $ php composer.phar update
 ```
 **Important:** Remember that you got to create a symbolic link from the apache `htdocs` to the app `api`.
 #### Want to develop?
-**Yes?** great, so jump to the [I want to develop](#i-just-want-to-use) section.
-**Nah?** ok, please jump to [I just want to use](#i-want-to-develop) section.
+**Yes?** great, so jump to the [I want to develop](#i-want-to-develop) section.
+
+**Nah?** ok, please jump to [I just want to use](#i-just-want-to-use) section.
 ### I just want to use
 Well, if thats the case, you are all setup, just run the `index.html` in the `frontend/dist` folder.
 And thats it, time to play, just jump to [Using](#using) section.
 ### I want to develop
-You'll just need:
+So you'll need to also install:
  - [NodeJs](https://nodejs.org/)
- - [Vue](https://vuejs.org/)
- - Some HTTP Server
- -- I reccomend [Apache](https://www.apache.org/), easier to setup with [XAMPP](https://www.apachefriends.org/).
- - [PHP](https://www.php.net/)
-#### Installation
+#### More Installation
 ```sh
-$ git clone https://github.com/jbrneto/sugarpuppy.git
-$ cd api
-$ php composer.phar update
-$ cd ../frontend
-$ npm install
 $ npm install -g @quasar/cli
+$ cd frontend
+$ npm install
 ```
 **Important:** Remember that you got to create a symbolic link from the apache `htdocs` to the app `api`.
 #### Running
