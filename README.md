@@ -29,7 +29,6 @@ $ npm install -g @quasar/cli
 $ cd frontend
 $ npm install
 ```
-**Important:** Remember that you got to create a symbolic link from the apache `htdocs` to the app `api`.
 #### Running
 *Considering you are in* `frontend`:
 ```sh
