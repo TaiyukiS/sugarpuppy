@@ -54,7 +54,9 @@ export default {
   },
   methods: {
     handleClick (event) {
-      this.$root.$emit(event, true)
+      if (event) {
+        this.$root.$emit(event, true)
+      }
     }
   }
 }

@@ -41,6 +41,12 @@ export default {
       this.loading = true
       PetService.getMeus()
         .then(pets => {
+          if (pets.length === 0) {
+            this.$q.notify({
+              message: 'Você não tem nenhum pet',
+              color: 'info'
+            })
+          }
           this.pets = pets
         })
         .catch(() => {

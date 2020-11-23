@@ -18,14 +18,17 @@ axiosInstance.interceptors.response.use((response) => {
   return response.data.dados
 })
 
-const updateAxiosHeaders = (headers) => {
+const updateAxiosHeaders = () => {
   axiosInstance.interceptors.request.use((config) => {
-    config.headers['access-key'] = headers.access_key
-    config.headers['id-usuario'] = headers.id_usuario
-    if (headers.id_pet) {
-      config.headers['id-pet'] = headers.id_pet
-    } else {
-      delete config.headers['id-pet']
+    const headers = LocalStorage.get('login')
+    if (headers) {
+      config.headers['access-key'] = headers.access_key
+      config.headers['id-usuario'] = headers.id_usuario
+      if (headers.id_pet) {
+        config.headers['id-pet'] = headers.id_pet
+      } else {
+        delete config.headers['id-pet']
+      }
     }
     return config
   })
@@ -39,7 +42,7 @@ export default async ({ Vue }) => {
   const dadosUsuario = LocalStorage.get('login')
 
   if (dadosUsuario) {
-    updateAxiosHeaders(dadosUsuario)
+    updateAxiosHeaders()
   }
 
   Vue.prototype.$axios = axiosInstance

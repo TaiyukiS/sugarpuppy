@@ -11,7 +11,7 @@ async function login (email, senha) {
       })
     LocalStorage.set('login', dadosUsuario)
 
-    updateAxiosHeaders(dadosUsuario)
+    updateAxiosHeaders()
     return dadosUsuario
   } catch (error) {
     return await Promise.reject(error)
@@ -27,7 +27,7 @@ function iamPet (pet) {
   dadosUsuario.original_url = dadosUsuario.url
   dadosUsuario.url = pet.url_foto
   LocalStorage.set('login', dadosUsuario)
-  updateAxiosHeaders(dadosUsuario)
+  updateAxiosHeaders()
 }
 function iamUSer () {
   LocalStorage.delete('ispet')
@@ -38,7 +38,7 @@ function iamUSer () {
   delete dadosUsuario.original_nome
   delete dadosUsuario.original_url
   LocalStorage.set('login', dadosUsuario)
-  updateAxiosHeaders(dadosUsuario)
+  updateAxiosHeaders()
 }
 
 function logoff () {

@@ -10,7 +10,7 @@
           aria-label="Menu"
           @click="leftDrawerOpen = !leftDrawerOpen"
         />
-        <q-toolbar-title @click="$router.push('/timeline')">
+        <q-toolbar-title class="cursor-pointer" @click="$router.push('/timeline')">
           Suggar Puppy
         </q-toolbar-title>
         <div>{{login.nome}}</div>
