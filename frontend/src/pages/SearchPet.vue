@@ -80,7 +80,7 @@
             label="Raça"
             v-bind:value="filtroRacaExibicao"
             v-on:input="atualizarFiltro('Raca', $event)"
-            :options="listaRaca">
+            :options="listaRacaFiltrado">
             <template v-slot:option="scope">
               <q-item
                 v-bind="scope.itemProps"
@@ -131,7 +131,7 @@
             label="Cidade"
             v-bind:value="filtroCidadeExibicao"
             v-on:input="atualizarFiltro('Cidade', $event)"
-            :options="listaCidade">
+            :options="listaCidadeFiltrado">
             <template v-slot:option="scope">
               <q-item
                 v-bind="scope.itemProps"
@@ -202,6 +202,7 @@ export default {
       filtroAnimal: null,
       filtroAnimalExibicao: null,
       listaRaca: [],
+      listaRacaFiltrado: [],
       filtroRaca: null,
       filtroRacaExibicao: null,
       listaCor: [],
@@ -211,6 +212,7 @@ export default {
       filtroEstado: null,
       filtroEstadoExibicao: null,
       listaCidade: [],
+      listaCidadeFiltrado: [],
       filtroCidade: null,
       filtroCidadeExibicao: null
     }
@@ -241,15 +243,32 @@ export default {
       .then(caracteristicas => {
         this.listaAnimal = caracteristicas.animais
         this.listaRaca = caracteristicas.racas
+        this.listaRacaFiltrado = caracteristicas.racas
         this.listaCor = caracteristicas.cores
         this.listaEstado = caracteristicas.estados
         this.listaCidade = caracteristicas.cidades
+        this.listaCidadeFiltrado = caracteristicas.cidades
       })
   },
   methods: {
     atualizarFiltro (filtro, valor) {
       this[`filtro${filtro}`] = valor
       this[`filtro${filtro}Exibicao`] = valor.nome
+
+      if (filtro === 'Animal') {
+        this.listaRacaFiltrado = this.listaRaca
+          .filter(raca => (
+            raca.id_animal === valor.id ||
+            !raca.id_animal
+          ))
+        this.filtroRaca = null
+        this.filtroRacaExibicao = null
+      } else if (filtro === 'Estado') {
+        this.listaCidadeFiltrado = this.listaCidade
+          .filter(cidade => cidade.id_estado === valor.id)
+        this.filtroCidade = null
+        this.filtroCidadeExibicao = null
+      }
     },
     transitioned () {
       this.blockLike = false
@@ -283,6 +302,8 @@ export default {
       this.$refs.carrosel.next()
     },
     limparFiltros () {
+      this.listaRacaFiltrado = this.listaRaca
+      this.listaCidadeFiltrado = this.listaCidade
       this.filtroAnimal = null
       this.filtroAnimalExibicao = ''
       this.filtroRaca = null

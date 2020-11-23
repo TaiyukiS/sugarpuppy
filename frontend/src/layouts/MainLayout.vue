@@ -23,7 +23,8 @@
       bordered
     >
       <q-list>
-        <q-item v-ripple>
+        <q-item clickable tag="a"
+          :href="'#/user?id='+login.id_usuario">
           <q-item-section avatar>
             <q-avatar>
               <img :src="login.url">
