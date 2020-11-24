@@ -3,7 +3,7 @@ import axios from 'axios'
 import LocalStorage from '../services/LocalStorage'
 
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost/sugarpuppy',
+  baseURL: 'https://sugarpuppy.azurewebsites.net/api',
   headers: {
     'Content-Type': 'application/json',
     'api-key': 'c4e00bb8f7d21b50fc56a91d775f61d2'
